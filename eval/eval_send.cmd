@@ -1,0 +1,1 @@
+curl.exe -X GET https://t.me/payjust_u_bot?start=ZXC
