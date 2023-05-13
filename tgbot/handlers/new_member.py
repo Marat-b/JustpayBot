@@ -44,5 +44,7 @@ async def user_unblocked_bot(event: ChatMemberUpdated, bot: Bot):
     # write record to DB (event.from_user.id)
     print('Hello new member!!!')
     print(f'event.from_user.id={event.from_user.id}, event.chat.id={event.chat.id}')
-    await bot.send_message(chat_id=event.chat.id,text=f'Event type = {event.chat.type}')
+    text = 'Вы успешно подписались на виртуального помощника JustPay. Я буду присылать Вам уведомления, которые Вы ' \
+           'активировали в личном кабинете.\n Если у Вас остались вопросы, выберите пункт меню.'
+    await bot.send_message(chat_id=event.chat.id,text=text)
     # await message.answer('Hello new member!!!')

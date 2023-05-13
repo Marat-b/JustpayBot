@@ -9,6 +9,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from tgbot.config import load_config
 from tgbot.handlers.admin import admin_router
 from tgbot.handlers.echo import echo_router
+from tgbot.handlers.left_member import left_member_router
 from tgbot.handlers.new_member import new_member_router
 from tgbot.handlers.referral import referral_router
 from tgbot.handlers.user import user_router
@@ -45,6 +46,7 @@ async def main():
 
     for router in [
         new_member_router,
+        left_member_router,
         admin_router,
         referral_router,
         user_router,
