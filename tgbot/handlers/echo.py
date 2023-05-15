@@ -9,9 +9,9 @@ echo_router = Router()
 @echo_router.message(F.text, StateFilter(None))
 async def bot_echo(message: types.Message):
     text = [
-        "Ехо без состояния.",
-        "Сообщение:",
-        message.text
+        "Извините я Вас не понял 🤓",
+        "Выберите пожалуйста нужный пункт меню или позвоните нам 8(800)33-33-175",
+
     ]
 
     await message.answer('\n'.join(text))
