@@ -4,13 +4,24 @@ from typing import Optional
 from pydantic import UUID4
 from sqlmodel import Field, Relationship, SQLModel, Session, create_engine
 
-from tgbot.models.CustomerModel import Client
+from tgbot.models.core_model import CoreModel
+from tgbot.models.customer_model import Client
 
 
 class UserBase(SQLModel):
     ParticipantId: str = Field(description='participants')
 
-class User(UserBase, table=True):
+class UserCreate(UserBase):
+    pass
+
+class UserUpdate(UserBase):
+    UserId: Optional[int]
+
+class UserRead(UserBase):
+    UserId: Optional[int]
+    ClientId: Optional[int]
+
+class User(UserBase, CoreModel, table=True):
     UserId: Optional[int] = Field(default=None, primary_key=True)
     ClientId: Optional[int] = Field(default=None, foreign_key="client.ClientId")
     client: Optional[Client] = Relationship(back_populates="users")
