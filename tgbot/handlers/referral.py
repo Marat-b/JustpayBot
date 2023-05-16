@@ -13,7 +13,8 @@ referral_router = Router()
 @referral_router.message(Command('referral'))
 async def referral(message: Message, bot: Bot, command: CommandObject):
     # start_link_encoded = await get_start_link(message.from_user.id, encode=True)
-    start_link_encoded = await create_start_link(bot, '6167e0eccf10537f879b0f73_1009', encode=True)
+    start_link_encoded = await create_start_link(bot, '6167e0eccf10537f879b0f73_participant_16',
+                                                 encode=True)
     print(start_link_encoded)
     await message.answer(f'Скопируйте ссылку и отправьте её выбранному пользователю <b>{hcode(start_link_encoded)}</b>')
     # chat: User = await bot.get_me()
