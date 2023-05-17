@@ -5,6 +5,7 @@ betterlogging
 aiohttp[speedups]
 sqlmodel
 psycopg2
+pika
 
 # # For enabling api:
 # backoff
