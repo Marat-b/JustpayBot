@@ -28,7 +28,7 @@ class UserDb(CoreModel, table=True):
     chat_id: int = Field(description='chat id from bot')
     company_id: str = Field(description='company id from JustPay')
     enable: bool = Field(default=True)
-    participant_id: str = Field(description='participant id from Loyalty')
+    participant_number: int = Field(description='participant number from Loyalty')
     user_id: Optional[int] = Field(default=None, primary_key=True)
     # client: Optional[ClientDb] = Relationship(back_populates="users")
 
