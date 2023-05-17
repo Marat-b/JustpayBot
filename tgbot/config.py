@@ -12,6 +12,9 @@ class DbConfig:
     database: str
     port: int = 5432
 
+    def uri(self):
+        return f"postgresql://{self.user}:{self.password}@{self.host}/{self.database}"
+
     # For SQLAlchemy
     # def construct_sqlalchemy_url(self, driver="asyncpg", host=None, port=None) -> URL:
     #     if not host:
@@ -53,6 +56,9 @@ class RedisConfig:
 class Miscellaneous:
     other_params: str = None
 
+@dataclass
+class SQLiteConfig:
+    db_path: str
 
 @dataclass
 class Config:
@@ -60,6 +66,7 @@ class Config:
     misc: Miscellaneous
     db: DbConfig = None
     redis: RedisConfig = None
+    sqlite: SQLiteConfig =None
 
 
 def load_config(path: str = None) -> Config:
@@ -73,18 +80,20 @@ def load_config(path: str = None) -> Config:
             use_redis=env.bool("USE_REDIS")
         ),
 
-        # db=DbConfig(
-        #     host=env.str('DB_HOST'),
-        #     password=env.str('POSTGRES_PASSWORD'),
-        #     user=env.str('POSTGRES_USER'),
-        #     database=env.str('POSTGRES_DB'),
-        # ),
+        db=DbConfig(
+            host=env.str('DB_HOST'),
+            password=env.str('POSTGRES_PASSWORD'),
+            user=env.str('POSTGRES_USER'),
+            database=env.str('POSTGRES_DB'),
+        ),
 
         # redis=RedisConfig(
         #     redis_pass=env.str("REDIS_PASSWORD"),
         #     redis_port=env.int("REDIS_PORT"),
         #     redis_host=env.str("REDIS_HOST"),
         # ),
+
+        # sqlite = SQLiteConfig(db_path=env.str("SQLITE_DB"),),
 
         misc=Miscellaneous()
     )
