@@ -9,7 +9,6 @@ config = load_config(".env")
 
 engine = create_engine(
     config.db.uri(),
-    echo=True
 )
 
 def create_db_and_tables():

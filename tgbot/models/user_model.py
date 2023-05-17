@@ -1,5 +1,6 @@
 from typing import Optional
 
+from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Relationship
 
 # from tgbot.models.app_database import create_db_and_tables
@@ -30,6 +31,8 @@ class UserDb(CoreModel, table=True):
     enable: bool = Field(default=True)
     participant_number: int = Field(description='participant number from Loyalty')
     user_id: Optional[int] = Field(default=None, primary_key=True)
+    __table_args__ = (UniqueConstraint('chat_id', 'company_id','participant_number',
+                                      name='_chat_company_participant'),)
     # client: Optional[ClientDb] = Relationship(back_populates="users")
 
 

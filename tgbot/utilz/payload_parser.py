@@ -3,7 +3,9 @@ def payload_parser(payload: str):
     if len(words) == 3:
         customer_id = words[0]
         if words[1] == 'participant':
-            return {"customer_id":words[0], "participant_id":words[2]}
+            return {"client_id":words[0], "participant_number":words[2]}
+        elif words[1] == 'customer':
+            return {"client_id":words[0], "customer_number":words[2]}
         else:
             return {}
 

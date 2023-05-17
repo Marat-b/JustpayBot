@@ -4,34 +4,34 @@ from aiogram.methods import SendContact
 from aiogram.types import Message
 from aiogram.utils.deep_linking import decode_payload
 
+from tgbot.controllers.user_controller import create_user
 from tgbot.utilz.payload_parser import payload_parser
 
 user_router = Router()
 
+text =['Привет {}👋',
+       '👀 Я виртуальный помощник компании JustPay',
+       'Я ещё многому учусь, но уже умею присылать важную информацию по точкам продажам 😎:',
+       "✔ сводный отчёт по продажам за день",
+       "✔ экстренные сообщения: если был возврат, не прошла сверка итогов, были ошибки в платежах",
+       "✔ фискальные чеки по точкам",
+       "",
+       "А ещё могу предложить бизнес решения нашей компании, ответить на вопросы по подключению эквайринга и покупке "
+       "терминала. Для этого Вам необходимо нажать кнопку подписаться"]
 
 @user_router.message(CommandStart())
 async def user_start(message: Message):
-    await message.reply("Приветствую, обычный пользователь!")
-    await message.answer(f'user id {message.from_user.id}')
+    # await message.reply("Приветствую, обычный пользователь!")
+    # await message.answer(f'user id {message.from_user.id}')
     print('User answered')
-    await message.answer(message.text)
+    # await message.answer(message.text)
     print(f'text={message.text}')
     message_texts = message.text
 
     text_splitted = message_texts.split(' ')
-
     # payloads = payload_parser(decode_payload(text_splitted[1]))
-    payloads = payload_parser(text_splitted[1])
-    print(f'payloads={payloads}')
-    print(f'payloads[0]={payloads["customer_id"]}')
-
-    # if len(text_splitted)==2:
-    #     decoded_text = decode_payload(text_splitted[1])
-    #     # decoded_text = text_splitted[1]
-    #     print(f'decoded_text={decoded_text}')
-    #     participant_id, participant_number = decoded_text.split('_')
-    #     print(f'participant_id={participant_id}, participant_number={participant_number}')
-        # write record to DB (participant_id, participant_number) with the appropriate chatId
-
-    # result = await SendContact(chat_id=message.from_user.id)
-    # await message.answer(message.contact.phone_number)
+    if len(text_splitted)==2:
+        create_user(message.from_user.id, text_splitted[1])
+    else:
+        fio = f'{message.from_user.first_name} {message.from_user.last_name}'
+        await message.answer(('\n'.join(text)).format(fio))
