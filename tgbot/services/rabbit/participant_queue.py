@@ -1,31 +1,44 @@
 import json
 
-import pika
+from aio_pika import DeliveryMode, Message, connect
 
 
 class ParticipantSender:
+    # def __init__(self):
+    #     self.connection = pika.BlockingConnection(
+    #         pika.ConnectionParameters(host='localhost'))
+    #     self.channel = self.connection.channel()
+    #     self.channel.queue_declare(queue='participant', exclusive=True)
+    #     print(' [*] Waiting for message. To exit press CTRL+C')
+    #
+    # def send(self, message):
+    #     print(f'message={message}')
+    #     self.channel.basic_publish(
+    #         exchange='',
+    #         routing_key='participant',
+    #         body=message,
+    #         properties=pika.BasicProperties(
+    #             delivery_mode=pika.spec.PERSISTENT_DELIVERY_MODE
+    #         )
+    #     )
+    #     self.connection.close()
     def __init__(self):
-        self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
-        self.channel = self.connection.channel()
+        pass
 
-        # self.channel.exchange_declare(exchange='logs', exchange_type='fanout')
+    async def send(self, message):
+        self.connection = await connect("amqp://guest:guest@localhost/")
+        async with self.connection:
+            # Creating a channel
+            channel = await self.connection.channel()
+            await channel.set_qos(prefetch_count=1)
 
-        result = self.channel.queue_declare(queue='', exclusive=True)
-        queue_name = result.method.queue
+            # Declaring queue
+            queue = await channel.declare_queue("participant", durable=True)
 
-        self.channel.queue_bind(exchange='logs', queue=queue_name)
+            # Sending the message
+            await channel.default_exchange.publish(
+                Message(message.encode(), delivery_mode=DeliveryMode.PERSISTENT),
+                routing_key=queue.name,
+            )
 
-        print(' [*] Waiting for message. To exit press CTRL+C')
-
-    def on_response(self, ch, method, properties, body):
-        print(" [x] %r" % body)
-        obj = json.loads(body.decode('utf8'))
-        print(f'obj={obj}')
-        print(f'key1={obj["key1"]}')
-
-    def send(self):
-        self.channel.basic_consume(
-            queue=queue_name, on_message_callback=self.on_response, auto_ack=True)
-
-        self.channel.start_consuming()
+            print(f" [x] Sent -> {message}")

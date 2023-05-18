@@ -4,7 +4,7 @@ from aiogram.methods import SendContact
 from aiogram.types import Message
 from aiogram.utils.deep_linking import decode_payload
 
-from tgbot.controllers.user_controller import create_user
+from tgbot.controllers.user_controller import create_user, send_user
 from tgbot.utilz.payload_parser import payload_parser
 
 user_router = Router()
@@ -32,6 +32,7 @@ async def user_start(message: Message):
     # payloads = payload_parser(decode_payload(text_splitted[1]))
     if len(text_splitted)==2:
         create_user(message.from_user.id, text_splitted[1])
+        await send_user(message.from_user.id)
     else:
         fio = f'{message.from_user.first_name} {message.from_user.last_name}'
         await message.answer(('\n'.join(text)).format(fio))
