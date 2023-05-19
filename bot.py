@@ -13,6 +13,7 @@ from tgbot.handlers.echo import echo_router
 from tgbot.handlers.left_member import left_member_router
 from tgbot.handlers.new_member import new_member_router
 from tgbot.handlers.referral import referral_router
+from tgbot.handlers.account import account_router
 from tgbot.handlers.user import user_router
 from tgbot.middlewares.config import ConfigMiddleware
 from app_database import create_db_and_tables
@@ -55,6 +56,7 @@ async def main():
         new_member_router,
         left_member_router,
         admin_router,
+        account_router,
         referral_router,
         user_router,
         echo_router

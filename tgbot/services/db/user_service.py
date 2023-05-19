@@ -28,11 +28,11 @@ class UserDbService(UserCore):
             return None
 
     def get_by_chat_id(self, chat_id:int):
-        users = self.collect_all_users().filter(self.filter_chat_id(chat_id))
-        return users
+        user = self.collect_all_users().filter(self.filter_chat_id(chat_id)).first()
+        return user
 
     def to_str_by_chat_id(self, chat_id:int) -> Optional[str]:
-        user = self.get_by_chat_id(chat_id).first()
+        user = self.get_by_chat_id(chat_id)
         if user is not None:
             return self._to_str(user)
         else:
