@@ -7,5 +7,5 @@ from aiogram.types import Message
 account_router = Router()
 
 @account_router.message(Command('account'))
-async def referral(message: Message, bot: Bot, command: CommandObject):
+async def account(message: Message, bot: Bot, command: CommandObject):
     logging.info('*** account command ***')

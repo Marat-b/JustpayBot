@@ -1,5 +1,9 @@
+import json
+import logging
+
 from tgbot.services.db.client_service import ClientDbService
 from tgbot.services.db.user_service import UserDbService
+from tgbot.services.rabbit.account_message import account_message
 from tgbot.services.rabbit.participant_queue import ParticipantSender
 from tgbot.utilz.payload_parser import payload_parser
 
@@ -21,3 +25,10 @@ async def send_user(chat_id: int):
     if user_message is not None:
         user_sender = ParticipantSender()
         await user_sender.send(user_message)
+
+def get_account(str_accounts: str):
+    accounts = json.loads(str_accounts)
+    print(accounts)
+    if len(accounts) > 0:
+        account_messages = [account_message(account) for account in accounts]
+        print(account_messages)
