@@ -51,6 +51,13 @@ class RedisConfig:
         else:
             return f"redis://{self.redis_host}:{self.redis_port}/0"
 
+@dataclass
+class RabbitConfig:
+    rabbit_pass: Optional[str]
+    rabbit_user: Optional[str]
+    rabbit_host: Optional[str]
+    def dsn(self) -> str:
+        return f"amqp://{self.rabbit_user}:{self.rabbit_pass}@{self.rabbit_host}/"
 
 @dataclass
 class Miscellaneous:
@@ -67,6 +74,7 @@ class Config:
     db: DbConfig = None
     redis: RedisConfig = None
     sqlite: SQLiteConfig =None
+    rabbit: RabbitConfig = None
 
 
 def load_config(path: str = None) -> Config:
@@ -85,6 +93,12 @@ def load_config(path: str = None) -> Config:
             password=env.str('POSTGRES_PASSWORD'),
             user=env.str('POSTGRES_USER'),
             database=env.str('POSTGRES_DB'),
+        ),
+
+        rabbit=RabbitConfig(
+            rabbit_host=env.str("RABBITMQ_HOST"),
+            rabbit_user= env.str("RABBITMQ_USER"),
+            rabbit_pass=env.str("RABBITMQ_PASSWORD")
         ),
 
         # redis=RedisConfig(

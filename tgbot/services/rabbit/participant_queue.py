@@ -2,6 +2,8 @@ import json
 
 from aio_pika import DeliveryMode, Message, connect
 
+from tgbot import config
+
 
 class ParticipantSender:
     # def __init__(self):
@@ -26,7 +28,7 @@ class ParticipantSender:
         pass
 
     async def send(self, message):
-        self.connection = await connect("amqp://guest:guest@localhost/")
+        self.connection = await connect(config.load_config('.env').rabbit.dsn())
         async with self.connection:
             # Creating a channel
             channel = await self.connection.channel()

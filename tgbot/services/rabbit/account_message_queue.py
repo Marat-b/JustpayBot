@@ -6,6 +6,9 @@ from aio_pika.abc import (
     AbstractChannel, AbstractConnection, AbstractIncomingMessage, AbstractQueue,
 )
 
+from tgbot import config
+
+
 class AccountMessageRpcClient:
     connection: AbstractConnection
     channel: AbstractChannel
@@ -18,7 +21,7 @@ class AccountMessageRpcClient:
 
     async def connect(self) -> "AccountMessageRpcClient":
         self.connection = await connect(
-            "amqp://guest:guest@localhost/", loop=self.loop,
+            config.load_config('.env').rabbit.dsn(), loop=self.loop,
         )
         self.channel = await self.connection.channel()
         self.callback_queue = await self.channel.declare_queue(exclusive=True)
