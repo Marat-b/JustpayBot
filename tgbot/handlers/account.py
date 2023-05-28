@@ -23,7 +23,7 @@ async def account(message: Message, bot: Bot, command: CommandObject):
     # user_data = get_participant_by_chat_id_to_get_account(0)
     if user_data is not None:
         account_message_rpc = await AccountMessageRpcClient().connect()
-        #     print(" [x] Requesting fib(30)")
+        # send request to message queue
         response = await account_message_rpc.call(user_data)
         print(f" [.] Got {response}")
         accounts = json.loads(response)

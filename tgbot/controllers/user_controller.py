@@ -21,6 +21,13 @@ def create_user(chat_id: int, text: str):
         client_service.create(user['client_id'], user['customer_number'], chat_id)
 
 async def send_user(chat_id: int):
+    """
+    Send user data to Message queue
+    :param chat_id:
+    :type int:
+    :return:
+    :rtype:
+    """
     user_service = UserDbService()
     user_message = user_service.to_str_by_chat_id(chat_id)
     if user_message is not None:

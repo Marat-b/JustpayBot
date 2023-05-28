@@ -21,10 +21,6 @@ text =['Привет {}👋',
 
 @user_router.message(CommandStart())
 async def user_start(message: Message):
-    # await message.reply("Приветствую, обычный пользователь!")
-    # await message.answer(f'user id {message.from_user.id}')
-    print('User answered')
-    # await message.answer(message.text)
     print(f'text={message.text}')
     message_texts = message.text
 
@@ -32,7 +28,8 @@ async def user_start(message: Message):
     # payloads = payload_parser(decode_payload(text_splitted[1]))
     if len(text_splitted)==2:
         create_user(message.from_user.id, text_splitted[1])
-        await send_user(message.from_user.id)
+        # send user data to message queuue
+        # await send_user(message.from_user.id)
     else:
         fio = f'{message.from_user.first_name} {message.from_user.last_name}'
         await message.answer(('\n'.join(text)).format(fio))
