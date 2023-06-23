@@ -31,6 +31,11 @@ class UserDbService(UserCore):
         user = self.collect_all_users().filter(self.filter_chat_id(chat_id)).first()
         return user
 
+    def get_by_company_id_participant_number(self, company_id:str, participant_number: int):
+        user = self.collect_all_users().filter(self.filter_company_id(company_id)).\
+            filter(self.filter_number(participant_number)).first()
+        return user
+
     def get_by_number(self, number:int):
         user = self.collect_all_users().filter(self.filter_number(number)).first()
         return user

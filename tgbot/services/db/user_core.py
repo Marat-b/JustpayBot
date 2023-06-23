@@ -15,5 +15,8 @@ class UserCore:
     def filter_chat_id(self, chat_id: int):
         return UserDb.chat_id == chat_id
 
+    def filter_company_id(self, company_id: str):
+        return UserDb.company_id == company_id
+
     def filter_number(self, number: int):
         return UserDb.participant_number == number

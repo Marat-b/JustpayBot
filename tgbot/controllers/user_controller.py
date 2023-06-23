@@ -1,6 +1,8 @@
 import json
 import logging
 
+from aiogram import Bot
+
 from tgbot.models.user_model import UserDb
 from tgbot.services.db.client_service import ClientDbService
 from tgbot.services.db.user_service import UserDbService
@@ -48,3 +50,16 @@ def get_participant_by_chat_id_to_get_account(chat_id: int) -> str | None:
         return f'{{"company_id":"{user.company_id}","participant_number":"{user.participant_number}"}}'
     else:
         return None
+
+def get_chat_id_by_company_id_to_get_account(company_id: str, participant_number: int) -> str | None:
+    user_service = UserDbService()
+    user = user_service.get_by_company_id_participant_number(company_id, participant_number)
+    return user.chat_id if user is not None else None
+
+async def send_message(bot:Bot,records):
+    # company_id: str, participant_number: int, title: str, text: str = None
+    for record in records:
+        chat_id = get_chat_id_by_company_id_to_get_account(record["initiator"], record["receiver"])
+        logging.info(f'chat_id={chat_id}')
+        if chat_id is not None:
+            await bot.send_message(chat_id=chat_id, text=record["name"])

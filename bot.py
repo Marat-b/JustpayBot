@@ -18,6 +18,7 @@ from tgbot.handlers.user import user_router
 from tgbot.middlewares.config import ConfigMiddleware
 from app_database import create_db_and_tables
 from tgbot.services import broadcaster
+from tgbot.services.rabbit.notification_receiver_queue import NotificationReceiverQueue
 
 logger = logging.getLogger(__name__)
 log_level = logging.INFO
@@ -65,6 +66,9 @@ async def main():
 
     register_global_middlewares(dp, config)
 
+    nr = NotificationReceiverQueue(bot)
+    await nr.connect()
+    asyncio.create_task(nr.main())
 
 
     await on_startup(bot, config.tg_bot.admin_ids)
