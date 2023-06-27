@@ -16,17 +16,18 @@ class NotificationReceiverQueue:
 
     async def connect(self):
         # Perform connection
-        self.connection = await connect(config.load_config('.env').rabbit.dsn())
+        self.connection = await connect(config.load_config('.env').rabbit.dsn(), loop=self.loop)
 
     async def on_message(self, message: AbstractIncomingMessage) -> None:
         async with message.process():
-            print(f" [x] Received message {message!r}")
-            await asyncio.sleep(message.body.count(b'.'))
-            print(f"     Message body is: {message.body!r}")
+            # print(f" [x] Received message {message!r}")
+            # await asyncio.sleep(message.body.count(b'.'))
+            # print(f"     Message body is: {message.body!r}")
             text_decoded = message.body.decode()
-            records = json.loads(text_decoded)
-            print(f'records={records}')
-            await send_message(self.bot, records)
+            record = json.loads(text_decoded)
+            print(f'record={record}')
+            # send message to bot
+            await send_message(self.bot, record)
 
     async def main(self) -> None:
         async with self.connection:
