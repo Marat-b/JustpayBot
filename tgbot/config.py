@@ -56,8 +56,9 @@ class RabbitConfig:
     rabbit_pass: Optional[str]
     rabbit_user: Optional[str]
     rabbit_host: Optional[str]
+    rabbit_port: Optional[str]
     def dsn(self) -> str:
-        return f"amqp://{self.rabbit_user}:{self.rabbit_pass}@{self.rabbit_host}/"
+        return f"amqp://{self.rabbit_user}:{self.rabbit_pass}@{self.rabbit_host}:{self.rabbit_port}/"
 
 @dataclass
 class Miscellaneous:
@@ -98,7 +99,8 @@ def load_config(path: str = None) -> Config:
         rabbit=RabbitConfig(
             rabbit_host=env.str("RABBITMQ_HOST"),
             rabbit_user= env.str("RABBITMQ_USER"),
-            rabbit_pass=env.str("RABBITMQ_PASSWORD")
+            rabbit_pass=env.str("RABBITMQ_PASSWORD"),
+            rabbit_port=env.str("RABBITMQ_PORT")
         ),
 
         # redis=RedisConfig(
