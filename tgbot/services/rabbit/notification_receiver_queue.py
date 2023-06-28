@@ -1,7 +1,7 @@
 import asyncio
 import json
 
-from aio_pika import connect
+from aio_pika import connect, connect_robust
 from aio_pika.abc import AbstractIncomingMessage
 
 from tgbot import config
@@ -16,7 +16,7 @@ class NotificationReceiverQueue:
 
     async def connect(self):
         # Perform connection
-        self.connection = await connect(config.load_config('.env').rabbit.dsn(), loop=self.loop)
+        self.connection = await connect_robust(config.load_config('.env').rabbit.dsn(), loop=self.loop)
 
     async def on_message(self, message: AbstractIncomingMessage) -> None:
         async with message.process():
