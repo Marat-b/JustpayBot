@@ -15,8 +15,11 @@ class NotificationReceiverQueue:
         self.connection = None
 
     async def connect(self):
-        # Perform connection
-        self.connection = await connect_robust(config.load_config('.env').rabbit.dsn(), loop=self.loop)
+        # try:
+            # Perform connection
+        self.connection = await connect_robust(config.load_config('.env').rabbit.dsn(), loop=self.loop, timeout=60)
+        # except:
+        #     self.connection = None
 
     async def on_message(self, message: AbstractIncomingMessage) -> None:
         async with message.process():
