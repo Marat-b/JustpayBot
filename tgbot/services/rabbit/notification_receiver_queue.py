@@ -48,4 +48,4 @@ class NotificationReceiverQueue:
             await queue.consume(self.on_message)
 
             print(" [*] Waiting for messages. To exit press CTRL+C")
-            await asyncio.Future()
+            await asyncio.Future(loop=self.loop)
