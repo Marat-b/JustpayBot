@@ -27,7 +27,7 @@ class UserDb(CoreModel, table=True):
     __tablename__ = 'user'
     # client_id: Optional[int] = Field(default=None, foreign_key="client.client_id")
     chat_id: int = Field(description='chat id from bot')
-    company_id: str = Field(description='company id from JustPay')
+    company_id: Optional[str] = Field(description='company id from JustPay')
     enable: bool = Field(default=True)
     participant_number: int = Field(description='participant number from Loyalty')
     user_id: Optional[int] = Field(default=None, primary_key=True)

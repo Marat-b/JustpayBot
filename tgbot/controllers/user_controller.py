@@ -26,7 +26,7 @@ def create_user(chat_id: int, text: str):
     if 'participant_number' in user:
         print('Has attribute participant_number')
         user_service = UserDbService()
-        user_service.create(user['client_id'], user['participant_number'], chat_id)
+        user_service.create(user['participant_number'], chat_id)
     if 'customer_number' in user:
         client_service = ClientDbService()
         client_service.create(user['customer_id'], user['customer_number'], chat_id)

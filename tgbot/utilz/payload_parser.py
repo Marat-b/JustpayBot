@@ -4,7 +4,7 @@ def payload_parser(payload: str):
     #     customer_id = payload[0]
     if payload[0] == 'p': # articipant
         print(f'participant_number={payload[2]}')
-        return {"client_id":payload[0], "participant_number":payload[2]}
+        return {"client_id":'', "participant_number":payload[1:]} # only "participant_number is used
     elif payload[0] == 'c':
         return {"customer_id":payload[1:], "customer_number": 0}
     else:

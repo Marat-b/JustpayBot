@@ -13,14 +13,17 @@ class UserDbService(UserCore):
         super().__init__(session)
         self._session = session
 
-    def create(self, company_id:str, participant_number:int, chat_id:int) -> Optional[UserDb]:
+    def create(self, participant_number:int, chat_id:int) -> Optional[UserDb]:
         try:
-            user = UserDb(company_id=company_id,participant_number=participant_number, chat_id=chat_id)
-            self._session.add(user)
-            self._session.commit()
-            self._session.refresh(user)
-            print(f'user={user}')
-            return user
+            if not self._exists(chat_id):
+                user = UserDb(participant_number=participant_number, chat_id=chat_id)
+                self._session.add(user)
+                self._session.commit()
+                self._session.refresh(user)
+                print(f'user={user}')
+                return user
+            else:
+                return None
         except Exception as e:
             # psycopg2.errors.UniqueViolation
             print(e)
@@ -47,6 +50,11 @@ class UserDbService(UserCore):
             return self._to_str(user)
         else:
             return None
+
+    def _exists(self, chat_id: int) -> bool:
+        count = self.collect_all_users().filter(self.filter_chat_id(chat_id)).count()
+        return True if count > 0 else False
+
     def _to_str(self, user) -> str:
         user_dict = user.__dict__
         user_dict.pop('_sa_instance_state', None)

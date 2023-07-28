@@ -12,6 +12,9 @@ class UserCore:
     def collect_all_users(self):
         return self.session.query(UserDb).order_by(desc(UserDb.user_id))
 
+    def filter_enable(self, enable: bool):
+        return UserDb.enable == enable
+
     def filter_chat_id(self, chat_id: int):
         return UserDb.chat_id == chat_id
 
