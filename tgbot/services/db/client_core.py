@@ -9,8 +9,13 @@ class ClientCore:
     def __init__(self, session: Session = next(get_session())):
         self.session = session
 
-    def collect_all_users(self):
+    def collect_all_customers(self):
         return self.session.query(ClientDb).order_by(desc(ClientDb.client_id))
 
+    def filter_enable(self,enable: bool):
+        return ClientDb.enable == enable
     def filter_chat_id(self, chat_id: int):
         return ClientDb.chat_id == chat_id
+
+    def filter_customer_id(self, customer_id: str):
+        return ClientDb.customer_id == customer_id

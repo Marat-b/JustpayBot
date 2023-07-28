@@ -68,6 +68,11 @@ def get_chat_id_by_company_id_to_get_account(company_id: str, participant_number
     user = user_service.get_by_company_id_participant_number(company_id, participant_number)
     return user.chat_id if user is not None else None
 
+def get_chat_id_by_customer_id(customer_id: str) -> int | None:
+    client_service = ClientDbService()
+    chat_id = client_service.get_chat_id_by_customer_id(customer_id)
+    return chat_id
+
 
 async def send_message(bot: Bot, record) -> None:
     """
@@ -79,6 +84,28 @@ async def send_message(bot: Bot, record) -> None:
 
     # company_id: str, participant_number: int, title: str, text: str = None
     chat_id = get_chat_id_by_company_id_to_get_account(record["initiator"], record["receiver"])
+    logging.info(f'chat_id={chat_id}')
+    if chat_id is not None:
+        if record["content"] is None:
+            await bot.send_message(chat_id=chat_id, text=record["name"])
+        else:
+            await bot.send_message(
+                chat_id=chat_id, text="<b>{}</b>\n{}".format(record["name"],record["content"]),
+                parse_mode='HTML'
+                )
+
+async def send_message_to_customer(bot: Bot, record) -> None:
+    """
+    Send message to customer from queue.
+    :param bot: Bot
+    :param records: Dictionary
+    :return: None
+    """
+
+    # company_id: str, participant_number: int, title: str, text: str = None
+    print(record["receiver"])
+    chat_id = get_chat_id_by_customer_id(record["receiver"])
+    # chat_id = 147166708
     logging.info(f'chat_id={chat_id}')
     if chat_id is not None:
         if record["content"] is None:

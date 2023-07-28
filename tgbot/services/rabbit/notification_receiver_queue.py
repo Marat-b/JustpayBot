@@ -5,7 +5,7 @@ from aio_pika import connect, connect_robust
 from aio_pika.abc import AbstractIncomingMessage
 
 from tgbot import config
-from tgbot.controllers.user_controller import send_message
+from tgbot.controllers.user_controller import send_message, send_message_to_customer
 
 
 class NotificationReceiverQueue:
@@ -32,6 +32,17 @@ class NotificationReceiverQueue:
             # send message to bot
             await send_message(self.bot, record)
 
+    async def on_message_customer(self, message: AbstractIncomingMessage) -> None:
+        async with message.process():
+            # print(f" [x] Received message {message!r}")
+            # await asyncio.sleep(message.body.count(b'.'))
+            # print(f"     Message body is: {message.body!r}")
+            text_decoded = message.body.decode()
+            record = json.loads(text_decoded)
+            print(f'record={record}')
+            # send message to bot
+            await send_message_to_customer(self.bot, record)
+
     async def main(self) -> None:
         async with self.connection:
             # Creating a channel
@@ -44,8 +55,17 @@ class NotificationReceiverQueue:
                 durable=True,
             )
 
-            # Start listening the queue with name 'task_queue'
+            # queue for customer regular notifications
+            queue_customer = await channel.declare_queue(
+                "customer_notif_queue",
+                durable=True,
+            )
+
+            # Start listening the queue with name 'reminder_queue'
             await queue.consume(self.on_message)
+
+            # Start listening the queue with name 'customer_notif_queue'
+            await queue_customer.consume(self.on_message_customer)
 
             print(" [*] Waiting for messages. To exit press CTRL+C")
             await asyncio.Future(loop=self.loop)

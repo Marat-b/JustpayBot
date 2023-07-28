@@ -22,7 +22,15 @@ class ClientDbService(ClientCore):
         else:
             return None
 
+    def get_chat_id_by_customer_id(self, customer_id) -> int | None:
+        customer = self.collect_all_customers()\
+            .filter(self.filter_customer_id(customer_id))\
+            .filter(self.filter_enable(True))\
+            .first()
+        print(f'get_chat_id_by_customer_id chat_id={customer.chat_id}')
+        return customer.chat_id if customer is not None else None
+
     def _exists(self, chat_id: int) -> bool:
-        count = self.collect_all_users().filter(self.filter_chat_id(chat_id)).count()
+        count = self.collect_all_customers().filter(self.filter_chat_id(chat_id)).count()
         return True if count > 0 else False
 
