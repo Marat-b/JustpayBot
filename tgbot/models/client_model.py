@@ -24,7 +24,7 @@ class ClientDb(CoreModel, table=True):
     __tablename__ = 'client'
     client_id: Optional[int] = Field(default=None, primary_key=True, description='Identity')
     chat_id: Optional[int] = Field(description='chat id from bot')
-    company_id: str = Field(description='company id from JustPay')
-    customer_number: int = Field(description='customer number from JustPay')
+    customer_id: str = Field(description='customer id from JustPay')
+    customer_number: int = Field(description='customer number from JustPay', default=0)
     enable: bool = Field(default=True)
     # users: List["UserDb"] = Relationship(back_populates="client")

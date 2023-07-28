@@ -24,10 +24,11 @@ async def user_start(message: Message):
     print(f'text={message.text}')
     message_texts = message.text
 
-    text_splitted = message_texts.split(' ')
-    # payloads = payload_parser(decode_payload(text_splitted[1]))
+    text_splitted = message_texts.split(' ') # split from 'start <hashed text>'
+
     if len(text_splitted)==2:
-        create_user(message.from_user.id, text_splitted[1])
+        create_user(message.from_user.id, decode_payload(text_splitted[1]))
+
         # send user data to message queuue
         # await send_user(message.from_user.id)
     else:

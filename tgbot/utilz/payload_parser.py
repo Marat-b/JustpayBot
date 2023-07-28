@@ -1,13 +1,13 @@
 def payload_parser(payload: str):
-    words = payload.split('_')
-    if len(words) == 3:
-        customer_id = words[0]
-        if words[1] == 'p': # articipant
-            print(f'participant_number={words[2]}')
-            return {"client_id":words[0], "participant_number":words[2]}
-        elif words[1] == 'customer':
-            return {"client_id":words[0], "customer_number":words[2]}
-        else:
-            return {}
+    # payload = payload.split('_')
+    # if len(payload) == 3:
+    #     customer_id = payload[0]
+    if payload[0] == 'p': # articipant
+        print(f'participant_number={payload[2]}')
+        return {"client_id":payload[0], "participant_number":payload[2]}
+    elif payload[0] == 'c':
+        return {"customer_id":payload[1:], "customer_number": 0}
+    else:
+        return {}
 
-    return None
+    # return None

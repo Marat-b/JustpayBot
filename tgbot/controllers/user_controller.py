@@ -12,6 +12,15 @@ from tgbot.utilz.payload_parser import payload_parser
 
 
 def create_user(chat_id: int, text: str):
+    """
+    Create user from user handler
+    :param chat_id: chat of user
+    :type chat_id:
+    :param text: hashed text
+    :type text:
+    :return:
+    :rtype:
+    """
     user = payload_parser(text)
     print(f'user={user}')
     if 'participant_number' in user:
@@ -20,7 +29,7 @@ def create_user(chat_id: int, text: str):
         user_service.create(user['client_id'], user['participant_number'], chat_id)
     if 'customer_number' in user:
         client_service = ClientDbService()
-        client_service.create(user['client_id'], user['customer_number'], chat_id)
+        client_service.create(user['customer_id'], user['customer_number'], chat_id)
 
 
 async def send_user(chat_id: int):
