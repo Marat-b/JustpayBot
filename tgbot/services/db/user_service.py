@@ -39,8 +39,16 @@ class UserDbService(UserCore):
             filter(self.filter_number(participant_number)).first()
         return user
 
-    def get_by_number(self, number:int):
-        user = self.collect_all_users().filter(self.filter_number(number)).first()
+    def get_by_number(self, participant_number:int) -> UserDb | None:
+        """
+        Get enabled user by participant number
+        :param number:
+        :type number:
+        :return:
+        :rtype:
+        """
+        user = self.collect_all_users().filter(self.filter_number(participant_number)).filter(self.filter_enable(
+            True)).first()
         return user
 
 

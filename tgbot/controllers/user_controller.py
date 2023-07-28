@@ -73,6 +73,10 @@ def get_chat_id_by_customer_id(customer_id: str) -> int | None:
     chat_id = client_service.get_chat_id_by_customer_id(customer_id)
     return chat_id
 
+def get_chat_id_by_participant_number(participant_number: int) -> int:
+    user_service = UserDbService()
+    user = user_service.get_by_number(participant_number)
+    return user.chat_id if user is not None else None
 
 async def send_message(bot: Bot, record) -> None:
     """
@@ -83,7 +87,8 @@ async def send_message(bot: Bot, record) -> None:
     """
 
     # company_id: str, participant_number: int, title: str, text: str = None
-    chat_id = get_chat_id_by_company_id_to_get_account(record["initiator"], record["receiver"])
+    # chat_id = get_chat_id_by_company_id_to_get_account(record["initiator"], record["receiver"])
+    chat_id = get_chat_id_by_participant_number(record["receiver"])
     logging.info(f'chat_id={chat_id}')
     if chat_id is not None:
         if record["content"] is None:
