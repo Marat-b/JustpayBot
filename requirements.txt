@@ -1,10 +1,10 @@
+sqlmodel
+psycopg2
 aiogram>=3.0.0b7
 environs~=9.0
 # redis
 betterlogging
 aiohttp[speedups]
-sqlmodel
-psycopg2
 aio-pika
 
 # # For enabling api:

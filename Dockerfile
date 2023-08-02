@@ -1,8 +1,8 @@
 FROM python:3.10-slim
-ENV BOT_NAME=$BOT_NAME
+RUN apt-get update && apt-get -y install libpq-dev gcc
+RUN mkdir app
+WORKDIR /app
 
-WORKDIR /usr/src/app/"${BOT_NAME:-tg_bot}"
-
-COPY requirements.txt /usr/src/app/"${BOT_NAME:-tg_bot}"
-RUN pip install -r /usr/src/app/"${BOT_NAME:-tg_bot}"/requirements.txt
-COPY . /usr/src/app/"${BOT_NAME:-tg_bot}"
+COPY requirements.txt /app
+RUN pip install -r /app/requirements.txt
+COPY . /app

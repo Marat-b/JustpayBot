@@ -65,13 +65,16 @@ async def main():
         dp.include_router(router)
 
     register_global_middlewares(dp, config)
+    loop = asyncio.get_event_loop()
+    nr = NotificationReceiverQueue(bot, loop)
 
-    nr = NotificationReceiverQueue(bot)
-    await nr.connect()
-    asyncio.create_task(nr.main())
+    # await nr.connect()
+    # asyncio.create_task(nr.main())
 
 
     await on_startup(bot, config.tg_bot.admin_ids)
+    await nr.connect()
+    asyncio.create_task(nr.main())
     # await dp.start_polling(bot, allowed_updates=["message", "inline_query", "chat_member", "my_chat_member"])
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
@@ -80,6 +83,6 @@ if __name__ == '__main__':
 
     try:
         create_db_and_tables()
-        asyncio.run(main())
+        asyncio.run(main(), debug=True)
     except (KeyboardInterrupt, SystemExit):
         logger.error("Бот был выключен!")

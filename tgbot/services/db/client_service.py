@@ -3,6 +3,7 @@ from typing import Optional
 from marshmallow.fields import Bool
 
 from app_database import get_session
+
 from tgbot.models.client_model import ClientDb
 from tgbot.services.db.client_core import ClientCore
 
@@ -27,7 +28,10 @@ class ClientDbService(ClientCore):
             .filter(self.filter_customer_id(customer_id))\
             .filter(self.filter_enable(True))\
             .first()
-        print(f'get_chat_id_by_customer_id chat_id={customer.chat_id}')
+        if customer is not None:
+            print(f'get_chat_id_by_customer_id chat_id={customer.chat_id}')
+        else:
+            print('get_chat_id_by_customer_id customer is None')
         return customer.chat_id if customer is not None else None
 
     def _exists(self, chat_id: int) -> bool:

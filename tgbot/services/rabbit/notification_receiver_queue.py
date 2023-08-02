@@ -9,9 +9,9 @@ from tgbot.controllers.user_controller import send_message, send_message_to_cust
 
 
 class NotificationReceiverQueue:
-    def __init__(self, bot):
+    def __init__(self, bot, loop):
         self.bot = bot
-        self.loop = asyncio.get_running_loop()
+        self.loop = loop #asyncio.get_running_loop()
         self.connection = None
 
     async def connect(self):
