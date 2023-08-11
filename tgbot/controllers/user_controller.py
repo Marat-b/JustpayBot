@@ -115,7 +115,7 @@ async def send_message_to_customer(bot: Bot, record) -> None:
     if chat_id is not None:
         if record["content"] is None:
             await bot.send_message(chat_id=chat_id, text=record["name"])
-        else:
+        else: # TODO to arrange code to try exception block
             await bot.send_message(
                 chat_id=chat_id, text="<b>{}</b>\n{}".format(record["name"],record["content"]),
                 parse_mode='HTML'
