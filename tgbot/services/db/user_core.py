@@ -1,5 +1,7 @@
-from sqlalchemy import desc
-from sqlmodel import Session
+from sqlalchemy import Integer, cast, desc
+from sqlalchemy.orm import Session
+
+# from sqlmodel import Session
 
 from app_database import get_session
 from tgbot.models.user_model import UserDb
@@ -10,7 +12,7 @@ class UserCore:
         self.session = session
 
     def collect_all_users(self):
-        return self.session.query(UserDb).order_by(desc(UserDb.user_id))
+        return self.session.query(UserDb).order_by(desc(cast(UserDb.user_id,Integer)))
 
     def filter_enable(self, enable: bool):
         return UserDb.enable == enable

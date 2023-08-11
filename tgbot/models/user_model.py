@@ -1,36 +1,21 @@
 from typing import Optional
 
+from sqlalchemy import Boolean, Column, Integer, String
+
 from sqlalchemy import UniqueConstraint
-from sqlmodel import Field, Relationship
-
-# from tgbot.models.app_database import create_db_and_tables
 from tgbot.models.core_model import CoreModel
-from tgbot.models.client_model import ClientDb
+from tgbot.models.get_base import Base
 
 
-# class UserBase(SQLModel):
-#     ParticipantId: str = Field(description='participants')
-#     ChatId:int
-#
-#
-# class UserCreate(UserBase):
-#     pass
-#
-# class UserUpdate(UserBase):
-#     UserId: Optional[int]
-#
-# class UserRead(UserBase):
-#     UserId: Optional[int]
-#     ClientDbId: Optional[int]
-
-class UserDb(CoreModel, table=True):
+# Base=declarative_base()
+class UserDb(CoreModel, Base):
     __tablename__ = 'user'
-    # client_id: Optional[int] = Field(default=None, foreign_key="client.client_id")
-    chat_id: int = Field(description='chat id from bot')
-    company_id: Optional[str] = Field(description='company id from JustPay')
-    enable: bool = Field(default=True)
-    participant_number: int = Field(description='participant number from Loyalty')
-    user_id: Optional[int] = Field(default=None, primary_key=True)
+    # client_id: Optional[int] = (default=None, foreign_key="client.client_id
+    chat_id: int = Column(Integer) #
+    company_id: Optional[str] = Column(String) #
+    enable: bool = Column(Boolean, default=True)
+    participant_number: int = Column(Integer)
+    user_id: Optional[int] = Column(Integer,  primary_key=True)
     __table_args__ = (UniqueConstraint('chat_id', 'company_id','participant_number',
                                       name='_chat_company_participant'),)
     # client: Optional[ClientDb] = Relationship(back_populates="users")

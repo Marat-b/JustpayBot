@@ -1,6 +1,5 @@
-sqlmodel
 psycopg2
-aiogram>=3.0.0b7
+aiogram>=3.0.0rc1
 environs~=9.0
 # redis
 betterlogging
@@ -13,6 +12,6 @@ ujson
 # yarl
 
 # # For PostgreSQL sqlalchemy + alembic:
-# sqlalchemy~=2.0
+sqlalchemy
 # alembic~=1.0
 # asyncpg

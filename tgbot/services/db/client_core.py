@@ -1,5 +1,7 @@
-from sqlalchemy import desc
-from sqlmodel import Session
+from sqlalchemy import Integer, cast, desc
+from sqlalchemy.orm import Session
+
+# from sqlmodel import Session
 
 from app_database import get_session
 from tgbot.models.client_model import ClientDb
@@ -10,7 +12,7 @@ class ClientCore:
         self.session = session
 
     def collect_all_customers(self):
-        return self.session.query(ClientDb).order_by(desc(ClientDb.client_id))
+        return self.session.query(ClientDb).order_by(desc(cast(ClientDb.client_id,Integer)))
 
     def filter_enable(self,enable: bool):
         return ClientDb.enable == enable

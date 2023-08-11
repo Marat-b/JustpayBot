@@ -1,7 +1,9 @@
 import json
 from typing import Optional
 
-from sqlmodel import Session
+from sqlalchemy.orm import Session
+
+# from sqlmodel import Session
 
 from app_database import get_session
 from tgbot.models.user_model import UserDb
