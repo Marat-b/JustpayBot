@@ -76,7 +76,7 @@ async def main():
     await nr.connect()
     task_nr = asyncio.create_task(nr.main())
 
-    await dp.start_polling(bot, allowed_updates=["message", "inline_query", "chat_member", "my_chat_member"])
+    # await dp.start_polling(bot, allowed_updates=["message", "inline_query", "chat_member", "my_chat_member"])
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     await  task_nr
 
