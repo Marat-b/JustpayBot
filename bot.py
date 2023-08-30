@@ -9,9 +9,11 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from tgbot.config import load_config
 from tgbot.handlers.admin import admin_router
+from tgbot.handlers.buttons import button_router
 from tgbot.handlers.echo import echo_router
 from tgbot.handlers.left_member import left_member_router
 from tgbot.handlers.new_member import new_member_router
+from tgbot.handlers.user_state import state_router
 from tgbot.handlers.referral import referral_router
 from tgbot.handlers.account import account_router
 from tgbot.handlers.user import user_router
@@ -60,6 +62,8 @@ async def main():
         account_router,
         referral_router,
         user_router,
+        button_router,
+        state_router,
         echo_router
     ]:
         dp.include_router(router)
@@ -68,15 +72,13 @@ async def main():
     loop = asyncio.get_event_loop()
     nr = NotificationReceiverQueue(bot, loop)
 
-    # await nr.connect()
-    # asyncio.create_task(nr.main())
-
-
     await on_startup(bot, config.tg_bot.admin_ids)
     await nr.connect()
-    asyncio.create_task(nr.main())
-    # await dp.start_polling(bot, allowed_updates=["message", "inline_query", "chat_member", "my_chat_member"])
+    task_nr = asyncio.create_task(nr.main())
+
+    await dp.start_polling(bot, allowed_updates=["message", "inline_query", "chat_member", "my_chat_member"])
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+    await  task_nr
 
 
 if __name__ == '__main__':

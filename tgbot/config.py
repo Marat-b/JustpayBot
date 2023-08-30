@@ -69,6 +69,16 @@ class SQLiteConfig:
     db_path: str
 
 @dataclass
+class MailConfig:
+    smtp_server: str
+    from_addr: str
+    to_addr: str
+    # subject: str
+    # body_text: str
+    mail_user: str
+    mail_password: str
+
+@dataclass
 class Config:
     tg_bot: TgBot
     misc: Miscellaneous
@@ -76,6 +86,7 @@ class Config:
     redis: RedisConfig = None
     sqlite: SQLiteConfig =None
     rabbit: RabbitConfig = None
+    mail: MailConfig = None
 
 
 def load_config(path: str = None) -> Config:
@@ -102,6 +113,15 @@ def load_config(path: str = None) -> Config:
             rabbit_pass=env.str("RABBITMQ_PASSWORD"),
             rabbit_port=env.str("RABBITMQ_PORT")
         ),
+
+        mail=MailConfig(smtp_server=env.str("SMTP_SERVER"),
+                        from_addr=env.str("FROM_ADDR"),
+                        to_addr=env.str("TO_ADDR"),
+                        # subject=env.str("SUBJECT"),
+                        # body_text=env.str("BODY_TEXT"),
+                        mail_user=env.str("MAIL_USER"),
+                        mail_password=env.str("MAIL_PASSWORD")
+                        ),
 
         # redis=RedisConfig(
         #     redis_pass=env.str("REDIS_PASSWORD"),
