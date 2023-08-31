@@ -5,6 +5,7 @@ environs~=9.0
 betterlogging
 aiohttp[speedups]
 aio-pika
+aiosmtplib
 
 # # For enabling api:
 # backoff
