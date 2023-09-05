@@ -6,18 +6,24 @@ from aiogram.utils.deep_linking import create_start_link
 from aiogram.utils.markdown import hcode
 from aiogram.methods import CreateChatInviteLink
 
-
+from tgbot.services.db.client_service import ClientDbService
 
 referral_router = Router()
 
 @referral_router.message(Command('referral'))
 async def referral(message: Message, bot: Bot, command: CommandObject):
     # start_link_encoded = await get_start_link(message.from_user.id, encode=True)
-    #TODO remove hard coded payload in create_start_link
-    start_link_encoded = await create_start_link(bot, '6167e0eccf10537f879b0f73_participant_16',
-                                                 encode=True)
-    print(start_link_encoded)
-    await message.answer(f'Скопируйте ссылку и отправьте её выбранному пользователю <b>{hcode(start_link_encoded)}</b>')
+    chat_id = message.chat.id
+    # print(f'bot.id={chat_id}')
+    customer = ClientDbService().get_by_chat_id(chat_id)
+    # print(f'payload={customer.customer_id}')
+    if customer is not None:
+        start_link_encoded = await create_start_link(bot, f'c{customer.customer_id}',
+                                                     encode=True)
+        # print(start_link_encoded)
+        await message.answer(f'Скопируйте ссылку и отправьте её выбранному пользователю <b>{hcode(start_link_encoded)}</b>')
+    else:
+        await message.answer('Пользователь не найден')
     # chat: User = await bot.get_me()
     # result: Chat = await bot.get_chat(chat.id)
     # result: ChatInviteLink = await bot.create_chat_invite_link(chat.id)

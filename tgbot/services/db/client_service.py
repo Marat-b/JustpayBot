@@ -23,6 +23,10 @@ class ClientDbService(ClientCore):
         else:
             return None
 
+    def get_by_chat_id(self, chat_id: int) -> ClientDb:
+        customer = self.collect_all_customers().filter(self.filter_chat_id(chat_id)).first()
+        return  customer
+
     def get_chat_id_by_customer_id(self, customer_id) -> int | None:
         customer = self.collect_all_customers()\
             .filter(self.filter_customer_id(customer_id))\
