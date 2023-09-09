@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 
 from aio_pika import connect, connect_robust
 from aio_pika.abc import AbstractIncomingMessage
@@ -67,5 +68,5 @@ class NotificationReceiverQueue:
             # Start listening the queue with name 'customer_notif_queue'
             await queue_customer.consume(self.on_message_customer)
 
-            print(" [*] Waiting for messages. To exit press CTRL+C")
+            logging.getLogger(__name__).info(" [*] Waiting for messages. To exit press CTRL+C")
             await asyncio.Future(loop=self.loop)
