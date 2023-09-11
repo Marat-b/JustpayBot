@@ -1,5 +1,5 @@
 psycopg2
-aiogram>=3.0.0rc1
+aiogram>=3.0.0
 environs~=9.0
 # redis
 betterlogging
