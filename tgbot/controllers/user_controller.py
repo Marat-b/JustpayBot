@@ -120,3 +120,7 @@ async def send_message_to_customer(bot: Bot, record) -> None:
                 chat_id=chat_id, text="<b>{}</b>\n{}".format(record["name"],record["content"]),
                 parse_mode='HTML'
                 )
+
+def set_user_enable_status(chat_id, status)->None:
+    user_service = UserDbService()
+    user_service.set_enable_status(chat_id, status)

@@ -4,6 +4,10 @@ from aiogram.filters import ADMINISTRATOR, ChatMemberUpdatedFilter, IS_NOT_MEMBE
     PROMOTED_TRANSITION, RESTRICTED
 from aiogram.types import ChatMemberUpdated, Message
 
+from tgbot.controllers.client_controller import set_client_enable_status
+from tgbot.controllers.user_controller import set_user_enable_status
+from tgbot.keyboards.reply import menu
+
 new_member_router = Router()
 # new_member_router.my_chat_member.filter(F.chat.type.in_({"group", "supergroup"}))
 new_member_router.my_chat_member.filter(F.chat.type == "private")
@@ -47,5 +51,7 @@ async def user_unblocked_bot(event: ChatMemberUpdated, bot: Bot):
     text = 'Вы успешно подписались на 👀 виртуального помощника компании JustPay.\n' \
  'Я буду присылать Вам уведомления 📧, которые Вы ' \
            'активировали в личном кабинете.\n Если у Вас остались вопросы, выберите пункт меню.👉'
-    await bot.send_message(chat_id=event.chat.id,text=text)
-    # await message.answer('Hello new member!!!')
+    set_client_enable_status(event.from_user.id, True)
+    set_user_enable_status(event.from_user.id, True)
+    await bot.send_message(chat_id=event.chat.id,text=text, reply_markup=menu)
+

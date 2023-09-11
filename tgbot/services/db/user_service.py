@@ -53,6 +53,14 @@ class UserDbService(UserCore):
             True)).first()
         return user
 
+    def set_enable_status(self, chat_id: int, status: bool) -> None:
+        user = self.get_by_chat_id(chat_id)
+        if user is not None:
+            user.enable = status
+            self._session.add(user)
+            self._session.commit()
+            self._session.refresh(user)
+
 
     def to_str_by_chat_id(self, chat_id:int) -> Optional[str]:
         user = self.get_by_chat_id(chat_id)

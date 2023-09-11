@@ -38,6 +38,14 @@ class ClientDbService(ClientCore):
             print('get_chat_id_by_customer_id customer is None')
         return customer.chat_id if customer is not None else None
 
+    def set_enable_status(self, chat_id: int, status: bool) -> None:
+        customer = self.get_by_chat_id(chat_id)
+        if customer is not None:
+            customer.enable = status
+            self._session.add(customer)
+            self._session.commit()
+            self._session.refresh(customer)
+
     def _exists(self, chat_id: int) -> bool:
         count = self.collect_all_customers().filter(self.filter_chat_id(chat_id)).count()
         return True if count > 0 else False
