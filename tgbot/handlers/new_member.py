@@ -41,7 +41,7 @@ new_member_router.message.filter(F.chat.type == "private")
 
 
 @new_member_router.my_chat_member(
-    ChatMemberUpdatedFilter(member_status_changed=MEMBER)
+    ChatMemberUpdatedFilter(member_status_changed=IS_NOT_MEMBER >> MEMBER)
 )
 async def user_unblocked_bot(event: ChatMemberUpdated, bot: Bot):
     # users.add(event.from_user.id)
