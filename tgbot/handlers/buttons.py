@@ -10,12 +10,13 @@ button_router = Router()
 async def how_to(message: Message):
     text = ("1) Зайдите в свой Личный кабинет по адресу <a "
             "href='https://lk.justpay.pro/'>https://lk.justpay.pro/</a>\n2) Перейдите в пункт меню: "
-            "<i>События-Настройка уведомлений</i>\n3) Отметьте уведомления в разделе <i>telegramm-bot</i>")
+            "<i>Уведомления-Настройка уведомлений</i>\n3) Отметьте уведомления, которые хотите подключить, в разделе "
+            "<i>telegramm-bot</i>")
     await message.answer(text, parse_mode='HTML')
 
 @button_router.message(F.text == 'Задать вопрос менеджеру')
 async def ask_question(message: Message, state: FSMContext):
-    await message.answer("Напишите вопрос и отправьте его:")
+    await message.answer("Напишите вопрос и укажите телефон для связи, чтобы наш менеджер мог связаться с вами:")
     await state.set_state(QuestionState.ask_question)
     # cfg = config.load_config('.env').mail
     # mail_sender = MailSender(cfg)
@@ -29,6 +30,6 @@ async def business_task(message: Message):
 
 @button_router.message(F.text == 'Внести предложение по улучшению сервиса')
 async def give_suggest(message: Message, state: FSMContext):
-    await message.answer("Напишите предложение и отправьте его:")
+    await message.answer("Напишите ваши предложения и по желанию укажите контакты для связи:")
     await state.set_state(SuggestState.give_suggest)
 
