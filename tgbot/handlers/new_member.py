@@ -50,7 +50,7 @@ async def user_unblocked_bot(event: ChatMemberUpdated, bot: Bot):
     print(f'event.from_user.id={event.from_user.id}, event.chat.id={event.chat.id}')
     text = 'Вы успешно подписались на 👀 виртуального помощника компании JustPay.\n' \
  'Я буду присылать Вам уведомления 📧, которые Вы ' \
-           'активировали в личном кабинете.\n Если у Вас остались вопросы, выберите пункт меню.👉'
+           'активировали в личном кабинете.\n Если у Вас остались вопросы, выберите пункт меню.👇'
     set_client_enable_status(event.from_user.id, True)
     set_user_enable_status(event.from_user.id, True)
     await bot.send_message(chat_id=event.chat.id,text=text, reply_markup=menu)

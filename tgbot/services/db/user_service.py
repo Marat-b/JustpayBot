@@ -32,6 +32,14 @@ class UserDbService(UserCore):
             self._session.rollback()
             return None
 
+    def is_exists(self, chat_id) -> bool:
+        user = self.collect_all_users().filter(self.filter_chat_id(chat_id)).filter(
+            self.filter_enable(
+                True
+            )
+        ).first()
+        return True if user is not None else False
+
     def get_by_chat_id(self, chat_id:int):
         user = self.collect_all_users().filter(self.filter_chat_id(chat_id)).first()
         return user

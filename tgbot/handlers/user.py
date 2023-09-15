@@ -4,7 +4,8 @@ from aiogram.methods import SendContact
 from aiogram.types import Message
 from aiogram.utils.deep_linking import decode_payload
 
-from tgbot.controllers.user_controller import create_user, send_user
+from tgbot.controllers.client_controller import create_client, is_client_exists
+from tgbot.controllers.user_controller import create_user, is_user_exists, send_user
 from tgbot.keyboards.reply import menu
 from tgbot.utilz.payload_parser import payload_parser
 
@@ -23,15 +24,21 @@ text =['Привет {}👋',
 @user_router.message(CommandStart())
 async def user_start(message: Message):
     print(f'text={message.text}')
+    # if is_client_exists(message.from_user.id) or is_user_exists(message.from_user.id):
+    #     await message.answer(f'Привет {message.from_user.first_name} {message.from_user.last_name}, Вы уже подписаны в '
+    #                          f'боте!' , reply_markup=menu)
+
+
     message_texts = message.text
 
     text_splitted = message_texts.split(' ') # split from 'start <hashed text>'
 
     if len(text_splitted)==2:
+        create_client(message.from_user.id, decode_payload(text_splitted[1]))
         create_user(message.from_user.id, decode_payload(text_splitted[1]))
 
-        # send user data to message queuue
+        # send user data to message queue
         # await send_user(message.from_user.id)
-    else:
+    # else:
         fio = f'{message.from_user.first_name} {message.from_user.last_name}'
         await message.answer(('\n'.join(text)).format(fio), reply_markup=menu)
