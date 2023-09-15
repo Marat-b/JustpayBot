@@ -12,6 +12,7 @@ from tgbot.services.db.user_service import UserDbService
 from tgbot.services.rabbit.participant_queue import ParticipantSender
 from tgbot.utilz.payload_parser import payload_parser
 
+logger = logging.getLogger(__name__)
 
 def create_user(chat_id: int, text: str):
     """
@@ -24,9 +25,9 @@ def create_user(chat_id: int, text: str):
     :rtype:
     """
     user = payload_parser(text)
-    print(f'user={user}')
+    logger.info(f'user={user}')
     if 'participant_number' in user:
-        print('Has attribute participant_number')
+        logger.info('Has attribute participant_number')
         user_service = UserDbService()
         user_service.create(user['participant_number'], chat_id)
     # if 'customer_number' in user:
@@ -53,10 +54,10 @@ def is_user_exists(chat_id) -> bool:
 
 # def get_account(str_accounts: str):
 #     accounts = json.loads(str_accounts)
-#     print(accounts)
+#     logger.info(accounts)
 #     if len(accounts) > 0:
 #         account_messages = [account_message(account) for account in accounts]
-#         print(account_messages)
+#         logger.info(account_messages)
 
 def get_participant_by_chat_id_to_get_account(chat_id: int) -> str | None:
     user_service = UserDbService()
@@ -100,7 +101,7 @@ async def send_message(bot: Bot, record) -> None:
     # company_id: str, participant_number: int, title: str, text: str = None
     # chat_id = get_chat_id_by_company_id_to_get_account(record["initiator"], record["receiver"])
     chat_id = get_chat_id_by_participant_number(record["receiver"])
-    logging.info(f'chat_id={chat_id}')
+    logger.info(f'chat_id={chat_id}')
     if chat_id is not None:
         if record["content"] is None:
             await bot.send_message(chat_id=chat_id, text=record["name"])
@@ -119,11 +120,11 @@ async def send_message_to_customer(bot: Bot, record) -> None:
     """
     try:
         # company_id: str, participant_number: int, title: str, text: str = None
-        print(record["receiver"])
+        logger.info(record["receiver"])
         chat_ids = get_chat_id_by_customer_id(record["receiver"])
         # chat_id = 147166708
         for chat_id in chat_ids:
-            logging.info(f'chat_id={chat_id}')
+            logger.info(f'chat_id={chat_id}')
             if record["content"] is None:
                 await bot.send_message(chat_id=chat_id, text=record["name"])
             else:
@@ -132,7 +133,7 @@ async def send_message_to_customer(bot: Bot, record) -> None:
                     parse_mode='HTML'
                     )
     except Exception as e:
-        logging.Logger('Exception=')
+        logging.error(f'Exception={e}')
 
 
 def set_user_enable_status(chat_id, status)->None:

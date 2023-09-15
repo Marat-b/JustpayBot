@@ -1,7 +1,10 @@
+import logging
+
 from tgbot.models.client_model import ClientDb
 from tgbot.services.db.client_service import ClientDbService
 from tgbot.utilz.payload_parser import payload_parser
 
+logger = logging.getLogger(__name__)
 
 def create_client(chat_id: int, text: str) -> ClientDb | None:
     """
@@ -14,7 +17,7 @@ def create_client(chat_id: int, text: str) -> ClientDb | None:
     :rtype:
     """
     client = payload_parser(text)
-    print(f'client={client}')
+    logger.info(f'client={client}')
     if 'customer_number' in client:
         client_service = ClientDbService()
         client = client_service.create(client['customer_id'], client['customer_number'], chat_id)

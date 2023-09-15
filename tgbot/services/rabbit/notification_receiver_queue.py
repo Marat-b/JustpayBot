@@ -8,6 +8,7 @@ from aio_pika.abc import AbstractIncomingMessage
 from tgbot import config
 from tgbot.controllers.user_controller import send_message, send_message_to_customer
 
+logger = logging.getLogger(__name__)
 
 class NotificationReceiverQueue:
     def __init__(self, bot, loop):
@@ -24,23 +25,23 @@ class NotificationReceiverQueue:
 
     async def on_message(self, message: AbstractIncomingMessage) -> None:
         async with message.process():
-            # print(f" [x] Received message {message!r}")
+            # logger.info(f" [x] Received message {message!r}")
             # await asyncio.sleep(message.body.count(b'.'))
-            # print(f"     Message body is: {message.body!r}")
+            # logger.info(f"     Message body is: {message.body!r}")
             text_decoded = message.body.decode()
             record = json.loads(text_decoded)
-            print(f'record={record}')
+            logger.info(f'record={record}')
             # send message to bot
             await send_message(self.bot, record)
 
     async def on_message_customer(self, message: AbstractIncomingMessage) -> None:
         async with message.process():
-            # print(f" [x] Received message {message!r}")
+            # logger.info(f" [x] Received message {message!r}")
             # await asyncio.sleep(message.body.count(b'.'))
-            # print(f"     Message body is: {message.body!r}")
+            # logger.info(f"     Message body is: {message.body!r}")
             text_decoded = message.body.decode()
             record = json.loads(text_decoded)
-            print(f'record={record}')
+            logger.info(f'record={record}')
             # send message to bot
             await send_message_to_customer(self.bot, record)
 
