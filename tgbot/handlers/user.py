@@ -40,5 +40,5 @@ async def user_start(message: Message):
         # send user data to message queue
         # await send_user(message.from_user.id)
     # else:
-        fio = f'{message.from_user.first_name} {message.from_user.last_name}'
-        await message.answer(('\n'.join(text)).format(fio), reply_markup=menu)
+    fio = f'{message.from_user.first_name} {message.from_user.last_name}'
+    await message.answer(('\n'.join(text)).format(fio), reply_markup=menu)
