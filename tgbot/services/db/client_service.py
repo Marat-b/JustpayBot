@@ -30,6 +30,10 @@ class ClientDbService(ClientCore):
                     .filter(self.filter_enable(
             True)).first())
         return True if customer is not None else False
+
+    def get_all_active_clients(self) -> List[ClientDb]:
+        return self.collect_all_customers().filter(self.filter_enable(True)).all()
+
     def get_by_chat_id(self, chat_id: int) -> ClientDb:
         customer = self.collect_all_customers().filter(self.filter_chat_id(chat_id)).first()
         return  customer

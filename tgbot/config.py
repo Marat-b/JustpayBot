@@ -44,10 +44,12 @@ class RedisConfig:
     redis_pass: Optional[str]
     redis_port: Optional[int]
     redis_host: Optional[str]
+    redis_user: Optional[str]
+    redis_hash_name: Optional[str]
 
     def dsn(self) -> str:
         if self.redis_pass:
-            return f"redis://:{self.redis_pass}@{self.redis_host}:{self.redis_port}/0"
+            return f"redis://{self.redis_user}:{self.redis_pass}@{self.redis_host}:{self.redis_port}/0"
         else:
             return f"redis://{self.redis_host}:{self.redis_port}/0"
 
@@ -123,11 +125,13 @@ def load_config(path: str = None) -> Config:
                         mail_password=env.str("MAIL_PASSWORD")
                         ),
 
-        # redis=RedisConfig(
-        #     redis_pass=env.str("REDIS_PASSWORD"),
-        #     redis_port=env.int("REDIS_PORT"),
-        #     redis_host=env.str("REDIS_HOST"),
-        # ),
+        redis=RedisConfig(
+            redis_pass=env.str("REDIS_PASSWORD"),
+            redis_port=env.int("REDIS_PORT"),
+            redis_host=env.str("REDIS_HOST"),
+            redis_user=env.str("REDIS_USER"),
+            redis_hash_name=env.str("REDIS_HASH_NAME")
+        ),
 
         # sqlite = SQLiteConfig(db_path=env.str("SQLITE_DB"),),
 

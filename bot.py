@@ -8,6 +8,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 # from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 
 from tgbot.config import load_config
+from tgbot.controllers.client_controller import fill_storage_by_clients
 from tgbot.handlers.admin import admin_router
 from tgbot.handlers.buttons import button_router
 from tgbot.handlers.echo import echo_router
@@ -27,8 +28,9 @@ log_level = logging.INFO
 bl.basic_colorized_config(level=log_level)
 # create_db_and_tables()
 
-async def on_startup(bot: Bot, admin_ids: list[int]):
+async def on_startup(bot: Bot, admin_ids: list[int], loop):
     # create_db_and_tables()
+    await fill_storage_by_clients(loop)
     await broadcaster.broadcast(bot, admin_ids, "Бот был запущен")
 
 
@@ -72,7 +74,7 @@ async def main():
     loop = asyncio.get_event_loop()
     nr = NotificationReceiverQueue(bot, loop)
 
-    await on_startup(bot, config.tg_bot.admin_ids)
+    await on_startup(bot, config.tg_bot.admin_ids, loop)
     await nr.connect()
     task_nr = asyncio.create_task(nr.main())
 
