@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import List, Optional
 
 from marshmallow.fields import Bool
+from sqlalchemy.orm import load_only
 
 from app_database import get_session
 
@@ -32,11 +34,14 @@ class ClientDbService(ClientCore):
         return True if customer is not None else False
 
     def get_all_active_clients(self) -> List[ClientDb]:
-        return self.collect_all_customers().filter(self.filter_enable(True)).all()
+        return (self.collect_all_customers().filter(self.filter_enable(True))
+        # .with_entities(ClientDb.chat_id, ClientDb.customer_id, ClientDb.enable)
+                # .options(load_only(ClientDb.chat_id, ClientDb.customer_id, ClientDb.enable))
+                .all())
 
-    def get_by_chat_id(self, chat_id: int) -> ClientDb:
-        customer = self.collect_all_customers().filter(self.filter_chat_id(chat_id)).first()
-        return  customer
+    def get_by_chat_id(self, chat_id: int) -> List[ClientDb]:
+        customers = self.collect_all_customers().filter(self.filter_chat_id(chat_id)).all()
+        return  customers
 
     def get_chat_id_by_customer_id(self, customer_id) -> List[ClientDb]:
         """
@@ -57,13 +62,15 @@ class ClientDbService(ClientCore):
         customer_chat_ids = [customer.chat_id for customer in customers]
         return customer_chat_ids
 
-    def set_enable_status(self, chat_id: int, status: bool) -> None:
-        customer = self.get_by_chat_id(chat_id)
-        if customer is not None:
+    def set_enable_status(self, chat_id: int, status: bool) -> list[ClientDb]:
+        customers = self.get_by_chat_id(chat_id)
+        for customer in customers:
             customer.enable = status
+            customer.update_date = datetime.now()
             self._session.add(customer)
             self._session.commit()
             self._session.refresh(customer)
+        return customers
 
     def _exists(self, chat_id: int, customer_id: str) -> bool:
         count = (self.collect_all_customers()

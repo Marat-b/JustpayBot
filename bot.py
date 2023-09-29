@@ -30,7 +30,7 @@ bl.basic_colorized_config(level=log_level)
 
 async def on_startup(bot: Bot, admin_ids: list[int], loop):
     # create_db_and_tables()
-    await fill_storage_by_clients(loop)
+    fill_storage_by_clients()
     await broadcaster.broadcast(bot, admin_ids, "Бот был запущен")
 
 

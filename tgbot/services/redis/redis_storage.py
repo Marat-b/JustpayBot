@@ -1,22 +1,21 @@
 import asyncio
 from json import dumps, loads
 
-from redis.asyncio import Redis
+from redis import Redis
 
 from tgbot import config
 
 
 class RedisStorage:
-   def __init__(self, loop):
-       # self.loop = asyncio.get_event_loop()
+   def __init__(self):
        print(config.load_config('.env').redis.dsn())
-       self.loop = loop
-       self.store = Redis().from_url(config.load_config('.env').redis.dsn())
+       self.store = Redis() #.from_url(config.load_config('.env').redis.dsn())
        self.hash_name = config.load_config('.env').redis.redis_hash_name
 
-   async def set(self,item):
-        await self.store.hset(self.hash_name, f'{(*item,)[0]}:{(*item,)[1]}', dumps(item))
-        # self.loop.run_until_complete(self.store.hset(self.hash_name, f'{(*item,)[0]}:{(*item,)[1]}', dumps(item)))
+   def set(self,item):
+       values = list(item.values())
+       print(f'item={values[0]}')
+       self.store.hset(self.hash_name, f'{values[0]}:{values[1]}', dumps(item))
    def set_list(self, dicts: list):
         # print(*d)
         for item in dicts:
@@ -24,13 +23,15 @@ class RedisStorage:
             # keys = item.keys()
             print((*item,)[0])
             i = (*item,)
+            values = list(item.values())
             # print(i["a"])
-            self.loop.run_until_complete(self.store.hset(self.hash_name,f'{(*item,)[0]}:{(*item,)[1]}', dumps(item)))
+            self.store.hset(self.hash_name, f'{values[0]}:{values[1]}', dumps(item))
    def get(self,item):
-        stuff =  self.loop.run_until_complete(self.store.hget(self.hash_name, f'{(*item,)[0]}:{(*item,)[1]}'))
-        return loads(stuff)
+       values = list(item.values())
+       stuff = self.store.hget(self.hash_name, f'{values[0]}:{values[1]}')
+       return loads(stuff)
    def remove(self):
-        self.loop.run_until_complete(self.store.delete(self.hash_name))
+        self.store.delete(self.hash_name)
 
    def close_con(self):
-       self.loop.run_until_complete(self.store.close())
+       self.store.close()
