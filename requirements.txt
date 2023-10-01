@@ -1,7 +1,7 @@
 psycopg2
 aiogram>=3.0.0
 environs~=9.0
-# redis
+redis
 betterlogging
 aiohttp[speedups]
 aio-pika

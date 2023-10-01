@@ -9,7 +9,7 @@ from tgbot import config
 class RedisStorage:
    def __init__(self):
        print(config.load_config('.env').redis.dsn())
-       self.store = Redis() #.from_url(config.load_config('.env').redis.dsn())
+       self.store = Redis(host=config.load_config('.env').redis.redis_host, port=config.load_config('.env').redis.redis_port) #.from_url(config.load_config('.env').redis.dsn())
        self.hash_name = config.load_config('.env').redis.redis_hash_name
 
    def set(self,item):
