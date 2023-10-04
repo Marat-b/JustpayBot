@@ -100,16 +100,18 @@ async def send_message(bot: Bot, record) -> None:
 
     # company_id: str, participant_number: int, title: str, text: str = None
     # chat_id = get_chat_id_by_company_id_to_get_account(record["initiator"], record["receiver"])
-    chat_id = get_chat_id_by_participant_number(record["receiver"])
-    logger.info(f'chat_id={chat_id}')
-    if chat_id is not None:
-        if record["content"] is None:
-            await bot.send_message(chat_id=chat_id, text=record["name"])
-        else:
-            await bot.send_message(
-                chat_id=chat_id, text="<b>{}</b>\n{}".format(record["name"],record["content"]),
-                parse_mode='HTML'
-                )
+    receivers = record["receiver"].split(';')
+    for receiver in receivers:
+        chat_id = get_chat_id_by_participant_number(receiver)
+        logger.info(f'chat_id={chat_id}')
+        if chat_id is not None:
+            if record["content"] is None:
+                await bot.send_message(chat_id=chat_id, text=record["name"])
+            else:
+                await bot.send_message(
+                    chat_id=chat_id, text="<b>{}</b>\n{}".format(record["name"],record["content"]),
+                    parse_mode='HTML'
+                    )
 
 async def send_message_to_customer(bot: Bot, record) -> None:
     """
