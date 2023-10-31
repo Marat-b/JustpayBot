@@ -11,14 +11,16 @@ from tgbot.services.db.client_service import ClientDbService
 referral_router = Router()
 
 @referral_router.message(Command('referral'))
-async def referral(message: Message, bot: Bot, command: CommandObject):
+async def referral(message: Message, bot: Bot, command: CommandObject, session):
     # start_link_encoded = await get_start_link(message.from_user.id, encode=True)
     chat_id = message.chat.id
     # print(f'bot.id={chat_id}')
-    customer = ClientDbService().get_by_chat_id(chat_id)
+    client_service = ClientDbService(session)
+    customers = await client_service.get_by_chat_id(chat_id)
     # print(f'payload={customer.customer_id}')
-    if customer is not None:
-        start_link_encoded = await create_start_link(bot, f'c{customer.customer_id}',
+    # TODO must be one record with customer
+    if len(customers) > 0:
+        start_link_encoded = await create_start_link(bot, f'c{customers[0].customer_id}',
                                                      encode=True)
         # print(start_link_encoded)
         await message.answer(f'Скопируйте ссылку и отправьте её выбранному пользователю <b>{hcode(start_link_encoded)}</b>')

@@ -7,7 +7,7 @@ from tgbot.utilz.payload_parser import payload_parser
 
 logger = logging.getLogger(__name__)
 
-def create_client(chat_id: int, text: str) -> ClientDb | None:
+async def create_client(session, chat_id: int, text: str) -> ClientDb | None:
     """
     Create client from client handler
     :param chat_id: chat of client
@@ -20,23 +20,24 @@ def create_client(chat_id: int, text: str) -> ClientDb | None:
     client = payload_parser(text)
     logger.info(f'client={client}')
     if 'customer_number' in client:
-        client_service = ClientDbService()
-        client = client_service.create(client['customer_id'], client['customer_number'], chat_id)
+        client_service = ClientDbService(session)
+        client = await client_service.create(client['customer_id'], client['customer_number'], chat_id)
         set_client_to_redis(client)
         return client
     else:
         return None
 
-def fill_storage_by_clients():
-    client_service = ClientDbService()
-    clients = client_service.get_all_active_clients()
-    # for client in clients:
-    #     print(client)
-    set_clients_to_redis(clients)
+async def fill_storage_by_clients(session_pool):
+    async with session_pool() as session:
+        client_service = ClientDbService(session)
+        clients = await client_service.get_all_active_clients()
+        # for client in clients:
+        #     print(client)
+        set_clients_to_redis(clients)
 
-def set_client_enable_status(chat_id, status)->None:
-    client_service = ClientDbService()
-    clients = client_service.set_enable_status(chat_id, status)
+async def set_client_enable_status(session, chat_id, status)->None:
+    client_service = ClientDbService(session)
+    clients = await client_service.set_enable_status(chat_id, status)
     set_clients_to_redis(clients)
 
 def set_client_to_redis(client: ClientDb):
@@ -57,6 +58,7 @@ def set_clients_to_redis(clients: list[ClientDb]):
     rs.set_list(selected_fields_clients)
     rs.close_con()
 
-def is_client_exists(chat_id) -> bool:
-    return ClientDbService().is_exists(chat_id)
+async def is_client_exists(session, chat_id) -> bool:
+    result = await ClientDbService(session).is_exists(chat_id)
+    return result
 

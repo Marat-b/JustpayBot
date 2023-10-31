@@ -17,9 +17,9 @@ def account_message(account_dict) -> str:
     )
     return text
 @account_router.message(Command('account'))
-async def account(message: Message, bot: Bot, command: CommandObject):
+async def account(message: Message, bot: Bot, command: CommandObject, session):
     logging.info('*** account command ***')
-    user_data = get_participant_by_chat_id_to_get_account(message.from_user.id)
+    user_data = await get_participant_by_chat_id_to_get_account(session, message.from_user.id)
     # user_data = get_participant_by_chat_id_to_get_account(0)
     if user_data is not None:
         account_message_rpc = await AccountMessageRpcClient().connect()

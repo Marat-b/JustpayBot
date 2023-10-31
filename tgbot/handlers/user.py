@@ -22,7 +22,7 @@ text =['Привет {}👋',
        "терминала. Для этого Вам необходимо нажать кнопку подписаться"]
 
 @user_router.message(CommandStart())
-async def user_start(message: Message):
+async def user_start(message: Message, session):
     print(f'text={message.text}')
     # if is_client_exists(message.from_user.id) or is_user_exists(message.from_user.id):
     #     await message.answer(f'Привет {message.from_user.first_name} {message.from_user.last_name}, Вы уже подписаны в '
@@ -34,8 +34,8 @@ async def user_start(message: Message):
     text_splitted = message_texts.split(' ') # split from 'start <hashed text>'
 
     if len(text_splitted)==2:
-        create_client(message.from_user.id, decode_payload(text_splitted[1]))
-        create_user(message.from_user.id, decode_payload(text_splitted[1]))
+        await create_client(session, message.from_user.id, decode_payload(text_splitted[1]))
+        await create_user(session, message.from_user.id, decode_payload(text_splitted[1]))
 
         # send user data to message queue
         # await send_user(message.from_user.id)

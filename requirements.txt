@@ -1,4 +1,4 @@
-psycopg2
+#psycopg2
 aiogram>=3.0.0
 environs~=9.0
 redis
@@ -15,4 +15,4 @@ ujson
 # # For PostgreSQL sqlalchemy + alembic:
 sqlalchemy
 # alembic~=1.0
-# asyncpg
+asyncpg

@@ -1,6 +1,6 @@
 FROM python:3.10.12-slim
 # for psycopg2 building
-RUN apt-get update && apt-get -y install libpq-dev gcc
+#RUN apt-get update && apt-get -y install libpq-dev gcc
 RUN mkdir app
 WORKDIR /app
 

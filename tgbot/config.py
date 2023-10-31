@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from environs import Env
+from sqlalchemy import URL
 
 
 @dataclass
@@ -13,23 +14,23 @@ class DbConfig:
     port: int = 5432
 
     def uri(self):
-        return f"postgresql://{self.user}:{self.password}@{self.host}/{self.database}"
+        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}/{self.database}"
 
     # For SQLAlchemy
-    # def construct_sqlalchemy_url(self, driver="asyncpg", host=None, port=None) -> URL:
-    #     if not host:
-    #         host = self.host
-    #     if not port:
-    #         port = self.port
-    #     uri = URL.create(
-    #         drivername=f"postgresql+{driver}",
-    #         username=self.user,
-    #         password=self.password,
-    #         host=host,
-    #         port=port,
-    #         database=self.database,
-    #     )
-    #     return uri.render_as_string(hide_password=False)
+    def construct_sqlalchemy_url(self) -> URL:
+        # if not host:
+        #     host = self.host
+        # if not port:
+        #     port = self.port
+        return URL.create(
+            drivername=f"postgresql+asyncpg",
+            username=self.user,
+            password=self.password,
+            host=self.host,
+            port=self.port,
+            database=self.database,
+        )
+        # return uri.render_as_string(hide_password=False)
 
 
 @dataclass

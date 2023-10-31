@@ -1,18 +1,16 @@
-from sqlalchemy import Integer, cast, desc
-from sqlalchemy.orm import Session
-
-# from sqlmodel import Session
-
-from app_database import get_session
+from sqlalchemy import Integer, cast, desc, func, select
 from tgbot.models.user_model import UserDb
 
 
 class UserCore:
-    def __init__(self, session: Session = next(get_session())):
-        self.session = session
+    # def __init__(self, session: AsyncSession = get_session()):
+    #     self.session = session
 
     def collect_all_users(self):
-        return self.session.query(UserDb).order_by(desc(cast(UserDb.user_id,Integer)))
+        return select(UserDb).order_by(desc(cast(UserDb.user_id,Integer)))
+
+    def count_all_users(self):
+        return select(func.count(UserDb.user_id))
 
     def filter_enable(self, enable: bool):
         return UserDb.enable == enable
