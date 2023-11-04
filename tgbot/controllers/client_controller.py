@@ -1,5 +1,6 @@
 import logging
 
+from tgbot.infrastructure.database.functions.setup import get_session
 from tgbot.models.client_model import ClientDb
 from tgbot.services.db.client_service import ClientDbService
 from tgbot.services.redis.redis_storage import RedisStorage
@@ -27,13 +28,14 @@ async def create_client(session, chat_id: int, text: str) -> ClientDb | None:
     else:
         return None
 
-async def fill_storage_by_clients(session_pool):
-    async with session_pool() as session:
-        client_service = ClientDbService(session)
-        clients = await client_service.get_all_active_clients()
-        # for client in clients:
-        #     print(client)
-        set_clients_to_redis(clients)
+async def fill_storage_by_clients(session):
+    session = await get_session()
+    # async with get_session() as session:
+    client_service = ClientDbService(session)
+    clients = await client_service.get_all_active_clients()
+    # for client in clients:
+    #     print(client)
+    set_clients_to_redis(clients)
 
 async def set_client_enable_status(session, chat_id, status)->None:
     client_service = ClientDbService(session)

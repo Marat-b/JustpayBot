@@ -1,9 +1,11 @@
+import asyncio
 import json
 import logging
 from typing import List
 
 from aiogram import Bot
 
+from tgbot.infrastructure.database.functions.setup import get_session
 from tgbot.models.client_model import ClientDb
 from tgbot.models.user_model import UserDb
 from tgbot.services.db.client_service import ClientDbService
@@ -81,6 +83,7 @@ async def get_chat_id_by_customer_id(session, customer_id: str) -> List[int]:
     :return:
     :rtype:
     """
+    session = await get_session()
     client_service = ClientDbService(session)
     chat_ids = await client_service.get_chat_id_by_customer_id(customer_id)
     return chat_ids
@@ -112,6 +115,7 @@ async def send_message(session, bot: Bot, record) -> None:
                     chat_id=chat_id, text="<b>{}</b>\n{}".format(record["name"],record["content"]),
                     parse_mode='HTML'
                     )
+            await asyncio.sleep(0.05) # 20 messages per second (Limit: 30 messages per second)
 
 async def send_message_to_customer(session, bot: Bot, record) -> None:
     """
@@ -134,6 +138,7 @@ async def send_message_to_customer(session, bot: Bot, record) -> None:
                     chat_id=chat_id, text="<b>{}</b>\n{}".format(record["name"],record["content"]),
                     parse_mode='HTML'
                     )
+            await asyncio.sleep(0.05)
     except Exception as e:
         logging.error(f'Exception={e}')
 

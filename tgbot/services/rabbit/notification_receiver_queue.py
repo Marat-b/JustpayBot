@@ -17,6 +17,13 @@ class NotificationReceiverQueue:
         self.session = session
         self.connection = None
 
+    async def __aenter__(self):
+        self.connection = await connect_robust(config.load_config('.env').rabbit.dsn(), loop=self.loop, timeout=60)
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        self.connection.close()
+        self.loop.close()
+
     async def connect(self):
         # try:
             # Perform connection
