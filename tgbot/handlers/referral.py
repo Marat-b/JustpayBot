@@ -6,17 +6,17 @@ from aiogram.utils.deep_linking import create_start_link
 from aiogram.utils.markdown import hcode
 from aiogram.methods import CreateChatInviteLink
 
+from tgbot.controllers.client_controller import get_referral
 from tgbot.services.db.client_service import ClientDbService
 
 referral_router = Router()
 
 @referral_router.message(Command('referral'))
-async def referral(message: Message, bot: Bot, command: CommandObject, session):
+async def referral(message: Message, bot: Bot, command: CommandObject):
     # start_link_encoded = await get_start_link(message.from_user.id, encode=True)
     chat_id = message.chat.id
     # print(f'bot.id={chat_id}')
-    client_service = ClientDbService(session)
-    customers = await client_service.get_by_chat_id(chat_id)
+    customers = await get_referral(chat_id)
     # print(f'payload={customer.customer_id}')
     # TODO must be one record with customer
     if len(customers) > 0:

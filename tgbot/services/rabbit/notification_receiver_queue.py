@@ -11,18 +11,17 @@ from tgbot.controllers.user_controller import send_message, send_message_to_cust
 logger = logging.getLogger(__name__)
 
 class NotificationReceiverQueue:
-    def __init__(self, bot, loop, session):
+    def __init__(self, bot, loop):
         self.bot = bot
         self.loop = loop #asyncio.get_running_loop()
-        self.session = session
         self.connection = None
 
-    async def __aenter__(self):
-        self.connection = await connect_robust(config.load_config('.env').rabbit.dsn(), loop=self.loop, timeout=60)
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        self.connection.close()
-        self.loop.close()
+    # async def __aenter__(self):
+    #     self.connection = await connect_robust(config.load_config('.env').rabbit.dsn(), loop=self.loop, timeout=60)
+    #
+    # async def __aexit__(self, exc_type, exc_val, exc_tb):
+    #     self.connection.close()
+    #     self.loop.close()
 
     async def connect(self):
         # try:
@@ -40,7 +39,7 @@ class NotificationReceiverQueue:
             record = json.loads(text_decoded)
             logger.info(f'record={record}')
             # send message to bot
-            await send_message(self.session, self.bot, record)
+            await send_message(self.bot, record)
 
     async def on_message_customer(self, message: AbstractIncomingMessage) -> None:
         async with message.process():
@@ -51,7 +50,7 @@ class NotificationReceiverQueue:
             record = json.loads(text_decoded)
             logger.info(f'record={record}')
             # send message to bot
-            await send_message_to_customer(self.session, self.bot, record)
+            await send_message_to_customer(self.bot, record)
 
     async def main(self) -> None:
         async with self.connection:

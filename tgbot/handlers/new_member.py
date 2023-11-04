@@ -43,7 +43,7 @@ new_member_router.message.filter(F.chat.type == "private")
 @new_member_router.my_chat_member(
     ChatMemberUpdatedFilter(member_status_changed=IS_NOT_MEMBER >> MEMBER)
 )
-async def user_unblocked_bot(event: ChatMemberUpdated, bot: Bot, session):
+async def user_unblocked_bot(event: ChatMemberUpdated, bot: Bot):
     # users.add(event.from_user.id)
     # write record to DB (event.from_user.id)
     print('Hello new member!!!')
@@ -51,7 +51,7 @@ async def user_unblocked_bot(event: ChatMemberUpdated, bot: Bot, session):
     text = 'Вы успешно подписались на 👀 виртуального помощника компании JustPay.\n' \
  'Я буду присылать Вам уведомления 📧, которые Вы ' \
            'активировали в личном кабинете.\n Если у Вас остались вопросы, выберите пункт меню.👇'
-    await set_client_enable_status(session, event.from_user.id, True)
-    await set_user_enable_status(session, event.from_user.id, True)
+    await set_client_enable_status(event.from_user.id, True)
+    await set_user_enable_status(event.from_user.id, True)
     await bot.send_message(chat_id=event.chat.id,text=text, reply_markup=menu)
 

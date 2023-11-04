@@ -8,7 +8,7 @@ from tgbot.utilz.payload_parser import payload_parser
 
 logger = logging.getLogger(__name__)
 
-async def create_client(session, chat_id: int, text: str) -> ClientDb | None:
+async def create_client(chat_id: int, text: str) -> ClientDb | None:
     """
     Create client from client handler
     :param chat_id: chat of client
@@ -21,6 +21,7 @@ async def create_client(session, chat_id: int, text: str) -> ClientDb | None:
     client = payload_parser(text)
     logger.info(f'client={client}')
     if 'customer_number' in client:
+        session = await get_session()
         client_service = ClientDbService(session)
         client = await client_service.create(client['customer_id'], client['customer_number'], chat_id)
         set_client_to_redis(client)
@@ -28,7 +29,7 @@ async def create_client(session, chat_id: int, text: str) -> ClientDb | None:
     else:
         return None
 
-async def fill_storage_by_clients(session):
+async def fill_storage_by_clients():
     session = await get_session()
     # async with get_session() as session:
     client_service = ClientDbService(session)
@@ -37,7 +38,14 @@ async def fill_storage_by_clients(session):
     #     print(client)
     set_clients_to_redis(clients)
 
-async def set_client_enable_status(session, chat_id, status)->None:
+async def get_referral(chat_id: int) -> list[ClientDb]:
+    session = await get_session()
+    client_service = ClientDbService(session)
+    customers = await client_service.get_by_chat_id(chat_id)
+    return customers
+
+async def set_client_enable_status(chat_id, status)->None:
+    session = await get_session()
     client_service = ClientDbService(session)
     clients = await client_service.set_enable_status(chat_id, status)
     set_clients_to_redis(clients)
@@ -60,7 +68,8 @@ def set_clients_to_redis(clients: list[ClientDb]):
     rs.set_list(selected_fields_clients)
     rs.close_con()
 
-async def is_client_exists(session, chat_id) -> bool:
+async def is_client_exists(chat_id) -> bool:
+    session = await get_session()
     result = await ClientDbService(session).is_exists(chat_id)
     return result
 

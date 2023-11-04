@@ -32,20 +32,15 @@ log_level = logging.INFO
 bl.basic_colorized_config(level=log_level)
 # create_db_and_tables()
 
-async def on_startup(bot: Bot, admin_ids: list[int], loop, session: AsyncSession):
+async def on_startup(bot: Bot, admin_ids: list[int], loop):
     # create_db_and_tables()
-    await fill_storage_by_clients(session)
+    await fill_storage_by_clients()
     await broadcaster.broadcast(bot, admin_ids, "Бот был запущен")
 
 
-def register_global_middlewares(dp: Dispatcher, config, session_pool):
+def register_global_middlewares(dp: Dispatcher, config):
     dp.message.outer_middleware(ConfigMiddleware(config))
     dp.callback_query.outer_middleware(ConfigMiddleware(config))
-
-    # dp.message.outer_middleware(DatabaseMiddleware(session_pool))
-    # dp.callback_query.outer_middleware(DatabaseMiddleware(session_pool))
-    # dp.my_chat_member.outer_middleware(DatabaseMiddleware(session_pool))
-
 
 async def main():
     logging.basicConfig(
@@ -81,11 +76,9 @@ async def main():
 
 
     loop = asyncio.get_running_loop()
-    session = await get_session()
-    # async with get_session(echo=False) as session:
-    register_global_middlewares(dp, config, session)
-    nr = NotificationReceiverQueue(bot, loop, session)
-    await on_startup(bot, config.tg_bot.admin_ids, loop, session)
+    register_global_middlewares(dp, config)
+    nr = NotificationReceiverQueue(bot, loop)
+    await on_startup(bot, config.tg_bot.admin_ids, loop)
 
     await nr.connect()
     task_nr = asyncio.create_task(nr.main())

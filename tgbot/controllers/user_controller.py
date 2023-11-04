@@ -15,7 +15,7 @@ from tgbot.utilz.payload_parser import payload_parser
 
 logger = logging.getLogger(__name__)
 
-async def create_user(session, chat_id: int, text: str):
+async def create_user(chat_id: int, text: str):
     """
     Create user from user handler
     :param chat_id: chat of user
@@ -29,6 +29,7 @@ async def create_user(session, chat_id: int, text: str):
     logger.info(f'user={user}')
     if 'participant_number' in user:
         logger.info('Has attribute participant_number')
+        session = await get_session()
         user_service = UserDbService(session)
         await user_service.create(user['participant_number'], chat_id)
     # if 'customer_number' in user:
@@ -36,7 +37,7 @@ async def create_user(session, chat_id: int, text: str):
     #     client_service.create(user['customer_id'], user['customer_number'], chat_id)
 
 
-async def send_user(session, chat_id: int):
+async def send_user(chat_id: int):
     """
     Send user data to Message queue
     :param chat_id:
@@ -44,13 +45,15 @@ async def send_user(session, chat_id: int):
     :return:
     :rtype:
     """
+    session = await get_session()
     user_service = UserDbService(session)
     user_message = await user_service.to_str_by_chat_id(chat_id)
     if user_message is not None:
         user_sender = ParticipantSender()
         await user_sender.send(user_message)
 
-async def is_user_exists(session, chat_id) -> bool:
+async def is_user_exists( chat_id) -> bool:
+    session = await get_session()
     result =  await UserDbService(session).is_exists(chat_id)
     return result
 
@@ -61,7 +64,8 @@ async def is_user_exists(session, chat_id) -> bool:
 #         account_messages = [account_message(account) for account in accounts]
 #         logger.info(account_messages)
 
-async def get_participant_by_chat_id_to_get_account(session, chat_id: int) -> str | None:
+async def get_participant_by_chat_id_to_get_account(chat_id: int) -> str | None:
+    session = await get_session()
     user_service = UserDbService(session)
     user = await user_service.get_by_chat_id(chat_id)
     if user is not None:
@@ -70,12 +74,13 @@ async def get_participant_by_chat_id_to_get_account(session, chat_id: int) -> st
         return None
 
 
-async def get_chat_id_by_company_id_to_get_account(session, company_id: str, participant_number: int) -> str | None:
+async def get_chat_id_by_company_id_to_get_account(company_id: str, participant_number: int) -> str | None:
+    session = await get_session()
     user_service = UserDbService(session)
     user = await user_service.get_by_company_id_participant_number(company_id, participant_number)
     return user.chat_id if user is not None else None
 
-async def get_chat_id_by_customer_id(session, customer_id: str) -> List[int]:
+async def get_chat_id_by_customer_id(customer_id: str) -> List[int]:
     """
     Get list of chat id by customer id
     :param customer_id:
@@ -88,12 +93,13 @@ async def get_chat_id_by_customer_id(session, customer_id: str) -> List[int]:
     chat_ids = await client_service.get_chat_id_by_customer_id(customer_id)
     return chat_ids
 
-async def get_chat_id_by_participant_number(session, participant_number: int) -> int:
+async def get_chat_id_by_participant_number(participant_number: int) -> int:
+    session = await get_session()
     user_service = UserDbService(session)
     user = await user_service.get_by_number(participant_number)
     return user.chat_id if user is not None else None
 
-async def send_message(session, bot: Bot, record) -> None:
+async def send_message(bot: Bot, record) -> None:
     """
     Send message to user from queue.
     :param bot: Bot
@@ -105,7 +111,7 @@ async def send_message(session, bot: Bot, record) -> None:
     # chat_id = get_chat_id_by_company_id_to_get_account(record["initiator"], record["receiver"])
     receivers = record["receiver"].split(';')
     for receiver in receivers:
-        chat_id = await get_chat_id_by_participant_number(session, int(receiver))
+        chat_id = await get_chat_id_by_participant_number(int(receiver))
         logger.info(f'chat_id={chat_id}')
         if chat_id is not None:
             if record["content"] is None:
@@ -117,7 +123,7 @@ async def send_message(session, bot: Bot, record) -> None:
                     )
             await asyncio.sleep(0.05) # 20 messages per second (Limit: 30 messages per second)
 
-async def send_message_to_customer(session, bot: Bot, record) -> None:
+async def send_message_to_customer(bot: Bot, record) -> None:
     """
     Send message to customer from queue.
     :param bot: Bot
@@ -127,7 +133,7 @@ async def send_message_to_customer(session, bot: Bot, record) -> None:
     try:
         # company_id: str, participant_number: int, title: str, text: str = None
         logger.info(record["receiver"])
-        chat_ids = await get_chat_id_by_customer_id(session, record["receiver"])
+        chat_ids = await get_chat_id_by_customer_id(record["receiver"])
         # chat_id = 147166708
         for chat_id in chat_ids:
             logger.info(f'chat_id={chat_id}')
@@ -143,6 +149,7 @@ async def send_message_to_customer(session, bot: Bot, record) -> None:
         logging.error(f'Exception={e}')
 
 
-async def set_user_enable_status(session, chat_id, status)->None:
+async def set_user_enable_status(chat_id, status)->None:
+    session = await get_session()
     user_service = UserDbService(session)
     await user_service.set_enable_status(chat_id, status)

@@ -13,7 +13,7 @@ left_member_router.message.filter(F.chat.type == "private")
 @left_member_router.my_chat_member(
     ChatMemberUpdatedFilter(member_status_changed=MEMBER >> IS_NOT_MEMBER)
 )
-async def user_blocked_bot(event: ChatMemberUpdated, bot: Bot, session):
+async def user_blocked_bot(event: ChatMemberUpdated, bot: Bot):
     # users.add(event.from_user.id)
     # write record to DB (event.from_user.id)
     print('Good buy old member!!!')
@@ -21,6 +21,6 @@ async def user_blocked_bot(event: ChatMemberUpdated, bot: Bot, session):
     # text = 'Вы успешно отписались на виртуального помощника JustPay.Если вы случайно отписались нажмите кнопку.'
     # await bot.send_message(chat_id=event.chat.id,text=text)
     # await message.answer(text)
-    await set_client_enable_status(session, event.from_user.id, False)
-    await set_user_enable_status(session, event.from_user.id, False)
+    await set_client_enable_status(event.from_user.id, False)
+    await set_user_enable_status(event.from_user.id, False)
 
