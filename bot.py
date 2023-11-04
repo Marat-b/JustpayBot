@@ -1,12 +1,9 @@
 import asyncio
 import logging
 
-import asyncpg
 import betterlogging as bl
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
-from sqlalchemy.ext.asyncio import AsyncSession
-
 # from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 
 from tgbot.config import load_config
@@ -20,10 +17,9 @@ from tgbot.handlers.user_state import state_router
 from tgbot.handlers.referral import referral_router
 from tgbot.handlers.account import account_router
 from tgbot.handlers.user import user_router
-from tgbot.infrastructure.database.functions.setup import create_session_pool, get_session
+from tgbot.infrastructure.database.functions.setup import create_tables
 from tgbot.middlewares.config import ConfigMiddleware
 # from app_database import create_db_and_tables
-from tgbot.middlewares.database import DatabaseMiddleware
 from tgbot.services import broadcaster
 from tgbot.services.rabbit.notification_receiver_queue import NotificationReceiverQueue
 
@@ -34,6 +30,7 @@ bl.basic_colorized_config(level=log_level)
 
 async def on_startup(bot: Bot, admin_ids: list[int], loop):
     # create_db_and_tables()
+    await create_tables()
     await fill_storage_by_clients()
     await broadcaster.broadcast(bot, admin_ids, "Бот был запущен")
 
@@ -59,8 +56,6 @@ async def main():
     storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(storage=storage)
-    # session_pool = await create_session_pool(config.db, echo=False)
-    # session = get_db()
     for router in [
         new_member_router,
         left_member_router,
@@ -74,7 +69,6 @@ async def main():
     ]:
         dp.include_router(router)
 
-
     loop = asyncio.get_running_loop()
     register_global_middlewares(dp, config)
     nr = NotificationReceiverQueue(bot, loop)
@@ -85,7 +79,7 @@ async def main():
 
     # await dp.start_polling(bot, allowed_updates=["message", "inline_query", "chat_member", "my_chat_member"])
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
-    await  task_nr
+    await task_nr
 
 if __name__ == '__main__':
     try:
@@ -93,5 +87,3 @@ if __name__ == '__main__':
         asyncio.run(main(), debug=True)
     except (KeyboardInterrupt, SystemExit):
         logger.error("Бот был выключен!")
-    # finally:
-    #     asyncio.run(asyncpg.Pool.close())

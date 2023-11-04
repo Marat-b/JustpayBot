@@ -16,19 +16,12 @@ class NotificationReceiverQueue:
         self.loop = loop #asyncio.get_running_loop()
         self.connection = None
 
-    # async def __aenter__(self):
-    #     self.connection = await connect_robust(config.load_config('.env').rabbit.dsn(), loop=self.loop, timeout=60)
-    #
-    # async def __aexit__(self, exc_type, exc_val, exc_tb):
-    #     self.connection.close()
-    #     self.loop.close()
-
     async def connect(self):
-        # try:
+        try:
             # Perform connection
-        self.connection = await connect_robust(config.load_config('.env').rabbit.dsn(), loop=self.loop, timeout=60)
-        # except:
-        #     self.connection = None
+            self.connection = await connect_robust(config.load_config('.env').rabbit.dsn(), loop=self.loop, timeout=60)
+        except:
+            self.connection = None
 
     async def on_message(self, message: AbstractIncomingMessage) -> None:
         async with message.process():

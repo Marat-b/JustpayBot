@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_session
 from sqlalchemy.orm import Session
 
 from tgbot.config import load_config
-from tgbot.infrastructure.database.functions.setup import create_session_pool
 from tgbot.models.client_model import Base
 
 config = load_config(".env")
