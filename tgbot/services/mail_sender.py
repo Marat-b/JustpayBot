@@ -20,7 +20,7 @@ class MailSender:
         self.user = cfg.mail_user
         self.password = cfg.mail_password
 
-    async def send_email(self,  mail_subject="", mail_body=""):
+    async def send_email(self,  mail_subject="", mail_body="")->bool:
         # create the message
         msg = MIMEMultipart()
         msg["From"] = self.from_addr
@@ -33,11 +33,15 @@ class MailSender:
         msg["To"] = self.to_addr
         emails = self.to_addr
         server = aiosmtplib.SMTP(hostname=self.host, use_tls=True) # username=self.user,
-        # password=self.password,
-        await server.connect()
-        await server.login(self.user, self.password)
-        await server.sendmail(self.from_addr, emails, msg.as_string())
-        await server.quit()
+        try:
+            await server.connect()
+            await server.login(self.user, self.password)
+            await server.sendmail(self.from_addr, emails, msg.as_string())
+            await server.quit()
+            return True
+        except Exception:
+            return False
+
 
     # def send_email_with_attachment(self, data_to_attach, file_name='file.png', mail_subject=""):
     #     # create the message
@@ -71,10 +75,11 @@ class MailSender:
     #     server.sendmail(self.from_addr, emails, msg.as_string())
     #     server.quit()
 
-async def send_email(mail_subject, mail_body):
+async def send_email(mail_subject, mail_body)->bool:
     cfg = config.load_config('.env').mail
     mail = MailSender(cfg)
-    await mail.send_email(mail_subject=mail_subject, mail_body=mail_body)
+    is_connect_success = await mail.send_email(mail_subject=mail_subject, mail_body=mail_body)
+    return is_connect_success
     # await asyncio.sleep(0)
     #print(f'send_email dp=')
     # asyncio.create_task(mail.send_email(mail_subject = mail_subject))
